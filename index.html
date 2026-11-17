@@ -110,7 +110,7 @@
   </div>
 
   <div class="open">
-    <a class="pill" id="openFull" href="https://claude.ai/artifact/96tiTtAvN7sY5eKUukWF6p" target="_blank" rel="noopener">Open full site +</a>
+    <a class="pill" href="site.html" target="_blank" rel="noopener">Open full site +</a>
     <span class="mono" style="align-self:center;color:#1b1d2288">scroll inside each screen</span>
   </div>
 
@@ -178,6 +178,8 @@
   function fit(){ frames.forEach(f=>{ const box=f.parentElement; const k=box.clientWidth/(+f.dataset.w); f.style.transform=`scale(${k})`; f.style.width=f.dataset.w+'px'; f.style.height=(box.clientHeight/k)+'px'; }); }
   addEventListener('resize',fit); fit(); setTimeout(fit,300); if(window.ResizeObserver) frames.forEach(f=>new ResizeObserver(fit).observe(f.parentElement));
 
+
+  const ob=document.getElementById('openFull'); if(ob) ob.onclick=()=>{ let w=null; try{ w=window.open(URL.createObjectURL(new Blob([html],{type:'text/html'})),'_blank'); }catch(e){} if(!w){ w=window.open('','_blank'); if(w){ w.document.open(); w.document.write(html); w.document.close(); } } };
 
   // line boil + Luis walking toward the button
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
