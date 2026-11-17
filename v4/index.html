@@ -194,9 +194,10 @@
   .m .spin{animation:csway 2.6s ease-in-out infinite alternate}
   @keyframes csway{from{transform:translateY(-2px) rotate(-8deg) scaleX(1)}to{transform:translateY(3px) rotate(8deg) scaleX(.55)}}
   @media (prefers-reduced-motion: reduce){.spin,.m .spin{animation:none}}
-  #spy{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:45;width:min(46vw,520px);height:40px;overflow:hidden;
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 26%,#000 74%,transparent);mask-image:linear-gradient(90deg,transparent,#000 26%,#000 74%,transparent);transition:opacity .4s}
-  #spy .trk{position:absolute;top:0;left:0;height:100%;display:flex;align-items:center;gap:34px;white-space:nowrap;will-change:transform}
+  #spy{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:45;width:min(62vw,780px);height:40px;overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);transition:opacity .4s}
+  #spy{background:#f4efe4cc;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)} #spy.ondark{background:#122749cc} body.dark #spy{background:#050608cc}
+  #spy .trk{position:absolute;top:0;left:0;height:100%;display:flex;align-items:center;gap:28px;white-space:nowrap;will-change:transform}
   #spy button{border:0;background:none;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--line);padding:8px 2px;display:inline-flex;align-items:center;gap:9px;transition:color .3s}
   #spy button::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.3;transition:opacity .3s,background .3s,box-shadow .3s}
   #spy button.on{color:var(--navy)} #spy button.on::before{opacity:1;background:var(--teal);box-shadow:0 0 0 4px #1CA5BA22}
@@ -814,19 +815,24 @@
 </script>
 <script>
 (()=>{ const spy=document.getElementById('spy'), trk=spy.querySelector('.trk'), btn=[...trk.children], ids=btn.map(b=>b.dataset.t), secs=ids.map(i=>document.getElementById(i));
-  btn.forEach((b,i)=>b.onclick=()=>{ const top=secs[i].getBoundingClientRect().top+scrollY; scrollTo({top: i===0? top : top+2, behavior:'smooth'}); });
-  let cur=0;
-  const tick=()=>{ const y=scrollY+innerHeight*.45, tops=secs.map(s=>s.getBoundingClientRect().top+scrollY);
+  let tops=[], cen=[], end=0;
+  const measure=()=>{ tops=secs.map(s=>s.getBoundingClientRect().top+scrollY); cen=btn.map(b=>b.offsetLeft+b.offsetWidth/2); end=document.documentElement.scrollHeight; };
+  // a click jumps straight there, no animated scrolling through the whole story
+  btn.forEach((b,i)=>b.onclick=()=>{ measure(); window.scrollTo({top: tops[i]+(i?2:0), behavior:'instant'}); });
+  let queued=false;
+  const update=()=>{ queued=false; const y=scrollY+innerHeight*.45;
     let i=0; while(i<tops.length-1 && y>=tops[i+1]) i++;
-    const span=(i<tops.length-1? tops[i+1] : document.documentElement.scrollHeight)-tops[i], f=Math.max(0,Math.min(1,(y-tops[i])/span));
-    // the track scrolls continuously: the label for where you are sits in the middle, the next one slides in as you go
-    const c=b=>b.offsetLeft+b.offsetWidth/2, a=c(btn[i]), n=i<btn.length-1? c(btn[i+1]) : a, pos=a+(n-a)*Math.max(0,(f-.7)/.3);
-    trk.style.transform=`translateX(${(spy.clientWidth/2-pos).toFixed(1)}px)`;
-    btn.forEach((b,j)=>{ const d=Math.abs(j-(i+Math.max(0,(f-.7)/.3))); b.style.opacity=Math.max(.38,1-d*.45).toFixed(2); b.classList.toggle('on',j===i); });
-    const dk=document.body.classList.contains('dark') || (secs[3].getBoundingClientRect().top<40) || (secs[1].getBoundingClientRect().top<40 && secs[1].getBoundingClientRect().bottom>40);
-    spy.classList.toggle('ondark',dk);
-    requestAnimationFrame(tick); };
-  requestAnimationFrame(tick); })();
+    const span=(i<tops.length-1? tops[i+1] : end)-tops[i], f=Math.max(0,Math.min(1,(y-tops[i])/span)), g=Math.max(0,(f-.7)/.3);
+    const pos=cen[i]+((i<cen.length-1? cen[i+1] : cen[i])-cen[i])*g;
+    // on wide screens the strip only leans toward where you are, so all four stay in view; on phones it centres the current one
+    const mid=(cen[0]+cen[cen.length-1])/2, k=innerWidth>760?.5:1, at=mid+(pos-mid)*k;
+    trk.style.transform=`translateX(${(spy.clientWidth/2-at).toFixed(1)}px)`;
+    btn.forEach((b,j)=>{ b.style.opacity=Math.max(.38,1-Math.abs(j-(i+g))*.45).toFixed(2); b.classList.toggle('on',j===i); });
+    const r1=secs[1].getBoundingClientRect(), r3=secs[3].getBoundingClientRect();
+    spy.classList.toggle('ondark', document.body.classList.contains('dark') || r3.top<40 || (r1.top<40 && r1.bottom>40)); };
+  const ask=()=>{ if(!queued){ queued=true; requestAnimationFrame(update); } };
+  addEventListener('scroll',ask,{passive:true}); addEventListener('resize',()=>{ measure(); ask(); }); addEventListener('load',()=>{ measure(); ask(); });
+  measure(); update(); setTimeout(()=>{ measure(); update(); },1500); })();
 </script>
 </body>
 </html>
