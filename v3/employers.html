@@ -54,6 +54,17 @@ section{padding:70px 0}
 .pour svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hint{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);color:#1b1d2266;transition:opacity .4s}
 .dark .hint{color:#ffffff55}
+/* employees: the page splits in two, the same scroll drives both stories */
+.split{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}
+.half{position:relative;display:flex;flex-direction:column;justify-content:center;padding:20px 3vw 60px;min-width:0}
+.half .htxt h1{font-size:clamp(2.2rem,4.4vw,4.4rem)} .half .htxt h2{font-size:clamp(2.2rem,4.4vw,4.4rem);color:#fbfaf6}
+.half .facts{margin-top:14px;gap:6px;font-size:15px}
+.half .scene{margin-top:10px}
+.ho{color:#e9e6dd}
+.ho .ink{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ho .hin{position:relative;opacity:0}
+.ho .facts li::before{background:linear-gradient(#b3b8c2,#6b707a)}
+@media (max-width:899px){.split{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.half{padding:10px 22px 10px}.half .htxt h1,.half .htxt h2{font-size:1.9rem}.half .facts{display:none}.half .scene{margin-top:0;max-height:24vh}.half .scene svg{max-height:24vh}}
 /* three doors */
 .doors{display:grid;gap:30px;margin-top:30px}
 @media (min-width:860px){.doors{grid-template-columns:repeat(3,1fr)}}
