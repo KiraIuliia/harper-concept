@@ -594,14 +594,14 @@
   const WORDS=[
     ['this is luis.',.03,.12,0,-150,'big'],
     ['delivery driver',.045,.12,-150,-30,''],
-    ['garland, tx',.06,.12,150,-60,''],
-    ['19 coworkers',.075,.12,140,20,''],
+    ['garland, tx',.07,.13,210,-60,''],
+    ['19 coworkers',.085,.13,200,20,''],
     ['tuesday, 7:40 am',.13,.24,-150,-80,''],
     ['something\'s off',.15,.24,150,-90,'r'],
     ['really off.',.17,.24,0,-160,'big r'],
     ['ouch',.19,.24,-130,20,'r'],
     ['his company already paid.',.25,.37,0,-165,'big t'],
-    ['one flat price',.27,.37,-160,-60,''],
+    ['one flat price',.27,.37,-205,138,''],
     ['per person, per month',.29,.37,165,-30,''],
     ['credits: ready',.32,.38,150,30,'t box'],
     ['clinic: 9 min away',.39,.5,-150,-90,''],
@@ -610,12 +610,12 @@
     ['harper pays the doctor.',.58,.69,0,-165,'big t'],
     ['same day',.61,.72,-140,-60,''],
     ['no claim forms',.64,.75,-140,10,''],
-    ['luis pays $0.',.70,.86,0,-170,'big'],
+    ['luis pays $0.',.70,.86,0,-205,'big'],
     ['the lump: gone',.70,.80,-140,-70,''],
-    ['back on route by lunch',.77,.86,-130,10,'t'],
-    ['same luis.',.87,.93,0,-170,'big'],
+    ['back on route by lunch',.77,.86,-60,145,'t'],
+    ['same luis.',.87,.93,0,-205,'big'],
     ['same tummy.',.895,.95,-130,-60,''],
-    ['different ending.',.92,1.01,0,-215,'big t'],
+    ['different ending.',.92,1.01,0,-235,'big t'],
   ];
   const wl=$('words');
   const wEls=WORDS.map(w=>{ const s=document.createElement('span'); s.className='w '+w[5]; s.textContent=w[0]; wl.appendChild(s); return s; });
@@ -789,7 +789,7 @@
       if(o<=0){ el.style.opacity=0; return; }
       if(el.classList.contains('big')) el.style.maxWidth=Math.max(140,leftMax-24)+'px';
       const ww = el.offsetWidth, wh = el.offsetHeight;
-      let x = hx + w[3]*S - ww/2, y = hy + w[4]*S - wh/2 + (1-tin)*14 - tout*10;
+      const big=el.classList.contains('big'); let x = hx + w[3]*S - ww/2, y = hy + w[4]*S - (big? wh : wh/2) + (1-tin)*14 - tout*10;
       x = clamp(x, 12, leftMax-ww-12);
       el.style.opacity=o.toFixed(3);
       el.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
