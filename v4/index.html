@@ -13,7 +13,7 @@
     --mono:"Space Mono",ui-monospace,monospace; --big:"Big Shoulders Display",Impact,sans-serif; --hand:"Shantell Sans",cursive;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:auto}
   body{background:var(--bg);color:var(--line);font-family:Figtree,system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   body.locked{overflow:hidden}
   a{color:inherit}
@@ -525,6 +525,7 @@
   const CAM=[[0,.12,0,0],[.12,.25,0,1],[.25,.42,1,1],[.42,.55,1,2],[.55,.72,2,2],[.72,.85,2,3],[.85,1.01,3,3]];
   let dq=0, dqT=0;
   function dRead(){ const r=docs.getBoundingClientRect(); dqT=clamp(-r.top/(r.height-innerHeight)); }
+  addEventListener('harperjump',()=>{ dRead(); dq=dqT; });
   addEventListener('scroll',dRead,{passive:true}); dRead();
   function dFrame(time){
     time/=1000;
@@ -642,6 +643,7 @@
   let target=0, p=0;
   function readScroll(){ const r=story.getBoundingClientRect(); target=clamp(-r.top/(r.height-innerHeight)); const inS=r.top<innerHeight*.5&&r.bottom>innerHeight*.3; $('bar').classList.toggle('off',!inS); }
   addEventListener('scroll',readScroll,{passive:true}); readScroll();
+  addEventListener('harperjump',()=>{ readScroll(); p=target; });
 
   function wavyEdgeX(baseX,y,amp,time){ return baseX+Math.sin(y*.018+time*2.2)*amp+Math.sin(y*.047-time*1.3)*amp*.5; }
 
@@ -818,7 +820,7 @@
   let tops=[], cen=[], end=0;
   const measure=()=>{ tops=secs.map(s=>s.getBoundingClientRect().top+scrollY); cen=btn.map(b=>b.offsetLeft+b.offsetWidth/2); end=document.documentElement.scrollHeight; };
   // a click jumps straight there, no animated scrolling through the whole story
-  btn.forEach((b,i)=>b.onclick=()=>{ measure(); window.scrollTo({top: tops[i]+(i?2:0), behavior:'instant'}); });
+  btn.forEach((b,i)=>b.onclick=()=>{ measure(); const h=document.documentElement, old=h.style.scrollBehavior; h.style.scrollBehavior='auto'; const sec=secs[i], y = i===0 ? 0 : ids[i]==='doctors' ? tops[i]+(sec.offsetHeight-innerHeight)*.18 : tops[i]+2; window.scrollTo(0, y); h.style.scrollBehavior=old; dispatchEvent(new Event('harperjump')); });
   let queued=false;
   const update=()=>{ queued=false; const y=scrollY+innerHeight*.45;
     let i=0; while(i<tops.length-1 && y>=tops[i+1]) i++;
