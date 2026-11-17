@@ -46,7 +46,7 @@
   #ecg{width:100%;height:100%;display:block}
   .join{position:absolute;bottom:5px;height:28px;display:inline-flex;align-items:center;padding:0 16px;border-radius:999px;background:#1CA5BA;color:#fff;text-decoration:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;clip-path:inset(0 0 0 100%);pointer-events:none;z-index:3;transition:background .2s}
   .join:hover{background:#122749}
-  .join.jr{right:12px} .join.jl{left:12px;clip-path:inset(0 100% 0 0)}
+  .join.jr{right:12px;clip-path:inset(0 100% 0 0)} .join.jl{left:12px;clip-path:inset(0 0 0 100%)}
   .join{will-change:clip-path,opacity}
   .join.live{pointer-events:auto}
 
@@ -187,6 +187,14 @@
   #enter{border-radius:999px;padding:10px 18px;transition:opacity .4s,background .2s,border-color .2s,color .2s}
   #enter:hover{background:var(--teal);border-color:var(--teal);color:#fff}
   #enter:hover i{color:#ffffffcc}
+  .spin{transform-box:fill-box;transform-origin:center;animation:cspin 1.1s ease-in-out infinite alternate}
+  @keyframes cspin{from{transform:scaleX(1)}to{transform:scaleX(.08)}}
+  #coins>g:nth-child(3n+1) .spin,#rain>g:nth-child(3n+1) .spin{animation-delay:-.37s}
+  #coins>g:nth-child(3n+2) .spin,#rain>g:nth-child(3n+2) .spin{animation-delay:-.74s}
+  .m .spin{animation:csway 2.6s ease-in-out infinite alternate}
+  .m:nth-child(3n+1) .spin{animation-delay:-.9s} .m:nth-child(3n+2) .spin{animation-delay:-1.7s}
+  @keyframes csway{from{transform:translateY(-2px) rotate(-8deg) scaleX(1)}to{transform:translateY(3px) rotate(8deg) scaleX(.55)}}
+  @media (prefers-reduced-motion: reduce){.spin,.m .spin{animation:none}}
 </style>
 </head>
 <body class="locked">
@@ -222,7 +230,7 @@
         <path id="ground" fill="none" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round"/>
 
         <!-- poof -->
-        <g id="poof"><path id="poofPath" fill="#f4efe4" stroke="#1b1d22" stroke-width="2.6" stroke-linejoin="round"/></g>
+        <g id="poof" opacity="0"><g transform="translate(-67 0)"><path d="M28 0 L30 -156 L104 -157 L106 0" fill="#f4efe4" stroke="#1b1d22" stroke-width="2.4" stroke-linejoin="round"/><path d="M36 0 L37 -148 L97 -149 L98 0" fill="#e9e6dd" stroke="#1b1d22" stroke-width="1.6" stroke-linejoin="round"/></g></g>
 
         <!-- employer -->
         <g id="emp" opacity="0">
@@ -381,8 +389,7 @@
         <g transform="translate(560 170)">
           <rect x="0" y="0" width="96" height="84" rx="4" fill="#fff" stroke="#1b1d22" stroke-width="2.4"/>
           <path d="M0 22 L96 22 M22 -8 L22 10 M74 -8 L74 10" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round"/>
-          <text x="48" y="48" text-anchor="middle" class="dm" style="font-size:11px">PAID IN</text>
-          <text x="48" y="68" text-anchor="middle" class="dm" style="font-size:11.5px;letter-spacing:0;fill:#ff3b30">30-45 DAYS</text>
+          <rect x="10.4" y="34.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="21.7" y="34.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="33.0" y="34.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="44.3" y="34.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="55.6" y="34.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="66.9" y="34.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="78.2" y="34.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="10.4" y="45.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="21.7" y="45.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="33.0" y="45.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="44.3" y="45.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="55.6" y="45.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="66.9" y="45.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="78.2" y="45.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="10.4" y="56.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="21.7" y="56.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="33.0" y="56.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="44.3" y="56.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="55.6" y="56.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="66.9" y="56.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="78.2" y="56.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="10.4" y="67.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="21.7" y="67.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="33.0" y="67.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="44.3" y="67.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="55.6" y="67.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="66.9" y="67.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><rect x="78.2" y="67.4" width="7.2" height="7.2" rx="1.5" fill="none" stroke="#1b1d2266" stroke-width="1.3"/><path class="calX" d="M10.0 34.0 L18.0 42.0 M18.0 34.0 L10.0 42.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M21.3 34.0 L29.3 42.0 M29.3 34.0 L21.3 42.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M32.6 34.0 L40.6 42.0 M40.6 34.0 L32.6 42.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M43.9 34.0 L51.9 42.0 M51.9 34.0 L43.9 42.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M55.2 34.0 L63.2 42.0 M63.2 34.0 L55.2 42.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M66.5 34.0 L74.5 42.0 M74.5 34.0 L66.5 42.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M77.8 34.0 L85.8 42.0 M85.8 34.0 L77.8 42.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M10.0 45.0 L18.0 53.0 M18.0 45.0 L10.0 53.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M21.3 45.0 L29.3 53.0 M29.3 45.0 L21.3 53.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M32.6 45.0 L40.6 53.0 M40.6 45.0 L32.6 53.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M43.9 45.0 L51.9 53.0 M51.9 45.0 L43.9 53.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M55.2 45.0 L63.2 53.0 M63.2 45.0 L55.2 53.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M66.5 45.0 L74.5 53.0 M74.5 45.0 L66.5 53.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M77.8 45.0 L85.8 53.0 M85.8 45.0 L77.8 53.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M10.0 56.0 L18.0 64.0 M18.0 56.0 L10.0 64.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M21.3 56.0 L29.3 64.0 M29.3 56.0 L21.3 64.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M32.6 56.0 L40.6 64.0 M40.6 56.0 L32.6 64.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M43.9 56.0 L51.9 64.0 M51.9 56.0 L43.9 64.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M55.2 56.0 L63.2 64.0 M63.2 56.0 L55.2 64.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M66.5 56.0 L74.5 64.0 M74.5 56.0 L66.5 64.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M77.8 56.0 L85.8 64.0 M85.8 56.0 L77.8 64.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M10.0 67.0 L18.0 75.0 M18.0 67.0 L10.0 75.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M21.3 67.0 L29.3 75.0 M29.3 67.0 L21.3 75.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M32.6 67.0 L40.6 75.0 M40.6 67.0 L32.6 75.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M43.9 67.0 L51.9 75.0 M51.9 67.0 L43.9 75.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M55.2 67.0 L63.2 75.0 M63.2 67.0 L55.2 75.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M66.5 67.0 L74.5 75.0 M74.5 67.0 L66.5 75.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/><path class="calX" d="M77.8 67.0 L85.8 75.0 M85.8 67.0 L77.8 75.0" stroke="#ff3b30" stroke-width="2.2" stroke-linecap="round" opacity="0"/>
         </g>
         <!-- doctor behind desk -->
         <g transform="translate(470 420)">
@@ -394,7 +401,7 @@
         <path d="M380 342 L620 340 L620 420 L392 420 L392 342 Z" fill="#f4efe4" stroke="#1b1d22" stroke-width="2.6" stroke-linejoin="round"/>
         <!-- claims pile -->
         <g id="pile"></g>
-        <text x="470" y="250" class="dh" id="d1b" opacity="0" text-anchor="middle">claims: piling up</text>
+        <text x="522" y="322" class="dh" id="d1b" opacity="0">claims: piling up</text>
       </g>
 
       <!-- SCENE 2: one page, one signature -->
@@ -541,7 +548,7 @@
   const team=$('team'), rg=$('staff'), RATE=99, mini=[];
   for(let i=0;i<30;i++){
     const d=document.createElement('div'); d.className='m';
-    d.innerHTML='<svg viewBox="-46 -186 92 192"><g class="cn"><circle cx="0" cy="-166" r="13" fill="#1CA5BA" stroke="#fbfaf6" stroke-width="2.4"/><path d="M0 -172 L0 -160" stroke="#fbfaf6" stroke-width="2.6" stroke-linecap="round"/></g><path d="M0 -130 C -30 -132 -38 -88 -36 -50 C -34 -24 -40 -10 -36 0 L 36 0 C 40 -14 33 -28 35 -52 C 37 -92 28 -128 0 -130 Z" fill="#f4efe4" stroke="#fbfaf6" stroke-width="3"/><circle cx="-10" cy="-98" r="4" fill="#122749"/><circle cx="8" cy="-99" r="4" fill="#122749"/><path d="M-10 -82 C -4 -74 4 -74 9 -82" fill="none" stroke="#122749" stroke-width="3.4" stroke-linecap="round"/></svg>';
+    d.innerHTML='<svg viewBox="-46 -186 92 192"><g class="cn"><g transform="translate(0 -166)"><g class="spin"><circle r="13" fill="#1CA5BA" stroke="#fbfaf6" stroke-width="2.4"/><path d="M0 -6 L0 6" stroke="#fbfaf6" stroke-width="2.6" stroke-linecap="round"/></g></g></g><path d="M0 -130 C -30 -132 -38 -88 -36 -50 C -34 -24 -40 -10 -36 0 L 36 0 C 40 -14 33 -28 35 -52 C 37 -92 28 -128 0 -130 Z" fill="#f4efe4" stroke="#fbfaf6" stroke-width="3"/><circle cx="-10" cy="-98" r="4" fill="#122749"/><circle cx="8" cy="-99" r="4" fill="#122749"/><path d="M-10 -82 C -4 -74 4 -74 9 -82" fill="none" stroke="#122749" stroke-width="3.4" stroke-linecap="round"/></svg>';
     team.appendChild(d); mini.push(d);
   }
   let shown=0, priceSeen=false, curTotal=0, totAnim=null;
@@ -568,7 +575,9 @@
   for(let i=0;i<3;i++){ const g=document.createElementNS(NSd,'g'); const h=[118,108,124][i];
     g.innerHTML=`<path d="M0 ${-h} C -27 ${-h-2} -34 ${-h*.68} -32 ${-h*.38} C -30 ${-h*.18} -36 ${-h*.08} -32 0 L 32 0 C 36 ${-h*.1} 30 ${-h*.22} 32 ${-h*.4} C 34 ${-h*.7} 26 ${-h*.98} 0 ${-h} Z" fill="#f4efe4" stroke="#1b1d22" stroke-width="2.6"/><circle cx="-9" cy="${-h*.76}" r="2.5" fill="#1b1d22"/><circle cx="8" cy="${-h*.77}" r="2.5" fill="#1b1d22"/><path d="M-8 ${-h*.62} C -3 ${-h*.55} 3 ${-h*.55} 8 ${-h*.62}" fill="none" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round"/>`;
     pats.appendChild(g); patList.push(g); }
-  const drops=[]; for(let i=0;i<12;i++){ const g=document.createElementNS(NSd,'g'); g.innerHTML='<circle r="11" fill="#1CA5BA" stroke="#1b1d22" stroke-width="2"/><path d="M0 -5 L0 5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>'; g.setAttribute('opacity',0); rain.appendChild(g); drops.push(g); }
+  const drops=[]; for(let i=0;i<12;i++){ const g=document.createElementNS(NSd,'g'); g.innerHTML='<g class="spin"><circle r="11" fill="#1CA5BA" stroke="#1b1d22" stroke-width="2"/><path d="M0 -5 L0 5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></g>'; g.setAttribute('opacity',0); rain.appendChild(g); drops.push(g); }
+  const ripples=drops.map(()=>{ const e=document.createElementNS(NSd,'ellipse'); e.setAttribute('fill','none'); e.setAttribute('stroke','#1b1d22'); e.setAttribute('stroke-width','1.8'); e.setAttribute('opacity',0); rain.appendChild(e); return e; });
+  const calXs=[...document.querySelectorAll('.calX')];
 
   let dk=1, dW=0, dH=0;
   function dsize(){ const st=document.querySelector('.dstage'); dW=st.clientWidth; dH=st.clientHeight; dk=Math.min(dW/560, dH*.78/500); dtr.setAttribute('width',3200*dk); dtr.setAttribute('height',500*dk); }
@@ -604,12 +613,15 @@
     let cam=0; for(const c of CAM){ if(q>=c[0]&&q<c[1]){ const t=ease(seg(q,c[0],c[1])); cam=lerp(sceneX(c[2]),sceneX(c[3]),t); break; } }
     dtr.style.transform=`translate(${(-cam).toFixed(1)}px,-50%)`;
     { const center=(cam+dW/2)/(800*dk); for(let i=1;i<=4;i++){ $('dsc'+i).classList.toggle('boil', Math.abs(center-(i-.5))<.95); } }
-    { const bw=dW, x=bw-q*bw; $('ecgRect2').setAttribute('x',x.toFixed(1)); $('ecgRect2').setAttribute('width',(bw-x).toFixed(1));
-      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9; $('ecgDot2').setAttribute('cx',x.toFixed(1)); $('ecgDot2').setAttribute('cy',ecgY(x).toFixed(1));
-      const mt=ease(seg(dq,.80,.855)), jb=$('joinCl');
-      $('ecgDot2').setAttribute('r',(3*pulse+mt*10).toFixed(2)); $('ecgDot2').setAttribute('opacity',(1-seg(dq,.83,.85)).toFixed(2));
-      $('ecgBase2').setAttribute('opacity',(1-mt).toFixed(2)); $('ecgFill2').setAttribute('opacity',(1-mt*.9).toFixed(2));
-      jb.style.clipPath=`inset(0 ${((1-mt)*100).toFixed(1)}% 0 0)`; jb.style.opacity=(1-seg(dq,.9,.93)).toFixed(2); jb.classList.toggle('live',mt>.9&&dq<.9); }
+    { const bw=dW, jb=$('joinCl'), bx=jb.offsetLeft+jb.offsetWidth, mt=ease(seg(dq,.80,.855));
+      const x=bw-seg(dq,.17,.80)*(bw-bx); $('ecgRect2').setAttribute('x',x.toFixed(1)); $('ecgRect2').setAttribute('width',(bw-x).toFixed(1));
+      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9;
+      $('ecgDot2').setAttribute('cx',(x-mt*16).toFixed(1)); $('ecgDot2').setAttribute('cy',lerp(ecgY(x),15,mt).toFixed(1));
+      $('ecgDot2').setAttribute('r',(3.2*pulse*(1-mt)+mt*11).toFixed(2)); $('ecgDot2').setAttribute('opacity',(1-seg(mt,.55,1)).toFixed(2));
+      $('ecgBase2').setAttribute('opacity',1); $('ecgFill2').setAttribute('opacity',1);
+      jb.style.clipPath=`inset(0 0 0 ${((1-mt)*100).toFixed(1)}%)`; jb.style.opacity=(1-seg(dq,.9,.93)).toFixed(2); jb.classList.toggle('live',mt>.9&&dq<.9); }
+    // calendar: one more day without money crossed out as the scene goes on
+    { const n=Math.floor(seg(q,.04,.24)*28.99); calXs.forEach((x,i)=>x.setAttribute('opacity', i<n?1:0)); }
     // scene 1
     piles.forEach((r,i)=>r.setAttribute('opacity', q>=.01+i*.014?1:0));
     $('d1a').setAttribute('opacity',seg(q,.02,.05)); $('d1b').setAttribute('opacity',seg(q,.08,.11));
@@ -624,9 +636,16 @@
     patList.forEach((g,i)=>{ const t=ease(seg(q,.56+i*.035,.64+i*.035)); const x=lerp(2292,chairsX[i],t); const bob=t>0&&t<1?-Math.abs(Math.sin(t*Math.PI*5))*8:0; const sitY=t>=1?-30:0; g.setAttribute('transform',`translate(${x.toFixed(1)} ${(420+bob+sitY).toFixed(1)}) scale(${t>0?1:0})`); });
     $('d3a').setAttribute('opacity',seg(q,.68,.71));
     // scene 4: coins rain into the jar, doctor jumps
-    let filled=0;
-    drops.forEach((g,i)=>{ const t=seg(q,.86+i*.008,.9+i*.008); if(t<=0||t>=1){ g.setAttribute('opacity',0); if(t>=1) filled++; return; } const x=2600+Math.sin(i*2.3)*26, y=lerp(150,380,t*t); g.setAttribute('opacity',1); g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(time*200+i*30)%360})`); });
-    $('jarFill').setAttribute('y',-filled*11); $('jarFill').setAttribute('height',filled*11);
+    // each coin falls to the water line, sinks and dissolves; the water rises as it melts in
+    const dis=drops.map((g,i)=>seg(seg(q,.86+i*.008,.905+i*.008),.62,1));
+    const filled=dis.reduce((a,b)=>a+b,0), surf=420-filled*11;
+    drops.forEach((g,i)=>{ const t=seg(q,.86+i*.008,.905+i*.008), rp=ripples[i];
+      if(t<=0||t>=1){ g.setAttribute('opacity',0); rp.setAttribute('opacity',0); return; }
+      const x=2600+Math.sin(i*2.3)*22;
+      if(t<.62){ const f=t/.62; g.setAttribute('opacity',1); g.setAttribute('transform',`translate(${x.toFixed(1)} ${lerp(150,surf,f*f).toFixed(1)})`); rp.setAttribute('opacity',0); }
+      else { const k=dis[i]; g.setAttribute('opacity',(1-k).toFixed(2)); g.setAttribute('transform',`translate(${x.toFixed(1)} ${(surf+4+k*16).toFixed(1)}) scale(${(1+k*.9).toFixed(2)} ${(1-k*.75).toFixed(2)})`);
+        rp.setAttribute('opacity',(1-k).toFixed(2)); rp.setAttribute('cx',x.toFixed(1)); rp.setAttribute('cy',surf.toFixed(1)); rp.setAttribute('rx',(10+k*26).toFixed(1)); rp.setAttribute('ry',(2+k*3).toFixed(1)); } });
+    $('jarFill').setAttribute('y',(-filled*11).toFixed(1)); $('jarFill').setAttribute('height',(filled*11).toFixed(1));
     const jt=seg(q,.9,1); let jy=0, sq=1; if(jt>0&&jt<1){ const ph=(jt*3)%1; jy=-Math.sin(ph*Math.PI)*60; sq=ph<.12||ph>.88?.9:1.03; }
     $('doc4').setAttribute('transform',`translate(2790 ${(420+jy).toFixed(1)})`);
     $('doc4In').setAttribute('transform',`scale(${(2-sq).toFixed(3)} ${sq.toFixed(3)})`);
@@ -640,24 +659,24 @@
 
 
   // poof shape
-  (function(){ let d=''; const k=18; for(let i=0;i<k;i++){ const a=i/k*Math.PI*2, r=(i%2?34:62)+Math.sin(i*7.3)*6; d+=(i?'L':'M')+(Math.cos(a)*r).toFixed(1)+' '+(Math.sin(a)*r*.8).toFixed(1)+' '; } $('poofPath').setAttribute('d',d+'Z'); })();
+  
 
   // coins
   const coinG=$('coins'), coins=[];
-  for(let i=0;i<6;i++){ const g=document.createElementNS(NS,'g'); g.innerHTML='<circle r="10" fill="#1CA5BA" stroke="#1b1d22" stroke-width="2"/><path d="M0 -4.5 L0 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>'; g.setAttribute('opacity',0); coinG.appendChild(g); coins.push(g); }
+  for(let i=0;i<6;i++){ const g=document.createElementNS(NS,'g'); g.innerHTML='<g class="spin"><circle r="10" fill="#1CA5BA" stroke="#1b1d22" stroke-width="2"/><path d="M0 -4.5 L0 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></g>'; g.setAttribute('opacity',0); coinG.appendChild(g); coins.push(g); }
 
   // words around Luis: [text, from, to, dx, dy, classes]  (dx/dy in Luis units from his head)
   const WORDS=[
     ['this is luis.',.03,.12,0,-150,'big'],
     ['delivery driver',.045,.12,-150,-30,''],
-    ['garland, tx',.06,.12,150,-60,''],
-    ['19 coworkers',.075,.12,140,20,''],
+    ['garland, tx',.07,.13,215,-60,''],
+    ['19 coworkers',.085,.13,205,20,''],
     ['tuesday, 7:40 am',.13,.24,-150,-80,''],
     ['something\'s off',.15,.24,150,-90,'r'],
     ['really off.',.17,.24,0,-160,'big r'],
     ['ouch',.19,.24,-130,20,'r'],
     ['his company already paid.',.25,.37,0,-165,'big t'],
-    ['one flat price',.27,.37,-160,-60,''],
+    ['one flat price',.27,.37,-330,-40,'',[-205,-112]],
     ['per person, per month',.29,.37,165,-30,''],
     ['credits: ready',.32,.38,150,30,'t box'],
     ['clinic: 9 min away',.39,.5,-150,-90,''],
@@ -666,17 +685,17 @@
     ['harper pays the doctor.',.58,.69,0,-165,'big t'],
     ['same day',.61,.72,-140,-60,''],
     ['no claim forms',.64,.75,-140,10,''],
-    ['luis pays $0.',.70,.86,0,-170,'big'],
+    ['luis pays $0.',.70,.86,0,-205,'big'],
     ['the lump: gone',.70,.80,-140,-70,''],
-    ['back on route by lunch',.77,.86,-130,10,'t'],
-    ['same luis.',.87,.93,0,-170,'big'],
+    ['back on route by lunch',.80,.86,-150,-70,'t'],
+    ['same luis.',.87,.93,0,-205,'big'],
     ['same tummy.',.895,.95,-130,-60,''],
-    ['different ending.',.92,1.01,0,-215,'big t'],
+    ['different ending.',.92,1.01,0,-235,'big t'],
   ];
   const wl=$('words');
   const wEls=WORDS.map(w=>{ const s=document.createElement('span'); s.className='w '+w[5]; s.textContent=w[0]; wl.appendChild(s); return s; });
 
-  const CH=['01 / poof','02 / ouch','03 / credits','04 / the clinic','05 / two endings','06 / same luis'];
+  const CH=['01 / hello','02 / ouch','03 / credits','04 / the clinic','05 / two endings','06 / same luis'];
   const story=$('story'), stage=document.querySelector('.stage'), svg=$('st');
   let W=0,H=0,S=1,GY=0;
   function size(){ W=stage.clientWidth; H=stage.clientHeight; svg.setAttribute('viewBox',`0 0 ${W} ${H}`); S=clamp(Math.min(W/560,H/720),.55,1.35); GY=H*.68; $('ground').setAttribute('d',`M-20 ${GY} C ${W*.25} ${GY-5}, ${W*.5} ${GY+5}, ${W*.75} ${GY-2} S ${W*.95} ${GY+2}, ${W+20} ${GY}`); }
@@ -692,13 +711,13 @@
     time/=1000;
     { const r=story.getBoundingClientRect(); if(r.bottom<-innerHeight||r.top>innerHeight*2){ requestAnimationFrame(frame); return; } }
     p += (target-p)*(reduce?1:.14);
-    { const bw=$('bar').clientWidth; const x=p*bw; $('ecgRect').setAttribute('width',x.toFixed(1));
-      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9; $('ecgDot').setAttribute('cx',x.toFixed(1)); $('ecgDot').setAttribute('cy',ecgY(x).toFixed(1));
-      // the dot flows into the button: line fades, dot swells, pill opens from the right
-      const mt=ease(seg(p,.955,.995)), jb=$('joinCo'), bh=$('bar').clientHeight;
-      $('ecgDot').setAttribute('r',(3*pulse+mt*10).toFixed(2)); $('ecgDot').setAttribute('opacity',(1-seg(p,.975,.99)).toFixed(2));
-      $('ecgBase').setAttribute('opacity',(1-mt).toFixed(2)); $('ecgFill').setAttribute('opacity',(1-mt*.9).toFixed(2));
-      jb.style.clipPath=`inset(0 0 0 ${((1-mt)*100).toFixed(1)}%)`; jb.classList.toggle('live',mt>.9); }
+    { const jb=$('joinCo'), bx=jb.offsetLeft, mt=ease(seg(p,.955,.995));
+      const x=seg(p,0,.955)*bx; $('ecgRect').setAttribute('width',(x+mt*bx*.02).toFixed(1));
+      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9;
+      $('ecgDot').setAttribute('cx',(x+mt*16).toFixed(1)); $('ecgDot').setAttribute('cy',lerp(ecgY(x),15,mt).toFixed(1));
+      $('ecgDot').setAttribute('r',(3.2*pulse*(1-mt)+mt*11).toFixed(2)); $('ecgDot').setAttribute('opacity',(1-seg(mt,.55,1)).toFixed(2));
+      $('ecgBase').setAttribute('opacity',1); $('ecgFill').setAttribute('opacity',1);
+      jb.style.clipPath=`inset(0 ${((1-mt)*100).toFixed(1)}% 0 0)`; jb.classList.toggle('live',mt>.9); }
     const ci = p<.12?0:p<.24?1:p<.38?2:p<.5?3:p<.86?4:5; 
 
     // split: Luis moves from 50% to 37.5% when the ink takes the right quarter; back at the end
@@ -707,9 +726,10 @@
     const leftMax = lerp(W, W*.75, split);
 
     // poof + appear (springy)
-    tf($('poof'), W*.5, GY-60*S, S*1.25*ease(seg(p,0,.05)));
-    op($('poof'), 1-seg(p,.06,.1));
-    const ap = seg(p,.03,.085); const apS = ap<=0?0:back(ap);
+    const dIn=seg(p,0,.03), dX=cx+86*S;
+    tf($('poof'), dX, GY, S*(dIn<=0?0:back(dIn)));
+    op($('poof'), dIn>0 ? 1-seg(p,.1,.13) : 0);
+    const ap = seg(p,.03,.085); const apS = ap<=0?0:.9+.1*ap; const walkX = (1-ease(ap))*86*S, walkY = ap>0&&ap<1 ? -Math.abs(Math.sin(ap*Math.PI*3))*7*S : 0;
 
     // pain
     const pain = seg(p,.13,.2);
@@ -733,7 +753,7 @@
     op($('armsU'), jumping||(happy&&p<.86)?1:0); op($('armsD'), jumping||(happy&&p<.86)?0:1);
     op($('sparks'), jumping?1:0);
     const lean = pain>0&&!happy ? -4*pain : 0;
-    tf($('luis'), cx, GY+jy, S*apS);
+    tf($('luis'), cx+walkX, GY+jy+walkY, S*apS);
     $('luisIn').setAttribute('transform',`rotate(${lean}) scale(${(2-sq).toFixed(3)} ${sq.toFixed(3)})`);
 
     // employer: walks in, throws coins, leaves
@@ -844,7 +864,7 @@
       if(o<=0){ el.style.opacity=0; return; }
       if(el.classList.contains('big')) el.style.maxWidth=Math.max(140,leftMax-24)+'px';
       const ww = el.offsetWidth, wh = el.offsetHeight;
-      let x = hx + w[3]*S - ww/2, y = hy + w[4]*S - wh/2 + (1-tin)*14 - tout*10;
+      const big=el.classList.contains('big'), off=(W<600&&w[6])?w[6]:[w[3],w[4]]; let x = hx + off[0]*S - ww/2, y = hy + off[1]*S - (big? wh : wh/2) + (1-tin)*14 - tout*10;
       x = clamp(x, 12, leftMax-ww-12);
       el.style.opacity=o.toFixed(3);
       el.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
