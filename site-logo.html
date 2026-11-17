@@ -226,7 +226,7 @@
   <div class="stage">
     <svg id="st" aria-label="Animated story: Luis gets sick. With Harper, his company's credits pay a local doctor the same day and he jumps for joy. Without Harper, he gets coverage, a deductible, a waiting room, and the doctor gets a claim form.">
       <g class="boil">
-        <path id="ground" fill="none" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round"/>
+        <path id="ground" fill="none" stroke="none"/>
 
         <!-- poof -->
         <g id="poof" opacity="0"><g transform="translate(-72 0)"><path d="M40 -154 L98 -166 L104 -162 L104 4 L98 7 L40 -4 L48 -10 L96 -2 L96 -156 L48 -146 Z" fill="url(#pBlue)"/><circle cx="58" cy="-80" r="5" fill="#a2d9dc"/></g></g>
@@ -328,7 +328,7 @@
     <div class="dask big" id="dnext" style="color:#fbfaf6">Your team<br><span class="t">is next.</span></div>
     <div class="dhead mono"><span>for doctors and clinics</span></div>
     <svg id="dtrack" viewBox="0 0 3200 500" aria-label="Animated story: a doctor with empty chairs and piles of insurance claims signs one page with Harper, gets new patients the next week, and gets paid directly the same day."><defs><linearGradient id="lgT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe9e8"/><stop offset="1" stop-color="#86cbd2"/></linearGradient><linearGradient id="dgT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#92c0ea"/><stop offset="1" stop-color="#4f7fd6"/></linearGradient></defs>
-      <path d="M0 420 C 400 414, 800 424, 1200 417 S 2000 422, 2400 418 S 3000 420, 3200 418" fill="none" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round" class="boil"/>
+      
 
       <!-- SCENE 1: empty chairs, piles of claims -->
       <g class="boil dsc" id="dsc1">
@@ -538,11 +538,12 @@
     let cam=0; for(const c of CAM){ if(q>=c[0]&&q<c[1]){ const t=ease(seg(q,c[0],c[1])); cam=lerp(sceneX(c[2]),sceneX(c[3]),t); break; } }
     dtr.style.transform=`translate(${(-cam).toFixed(1)}px,-50%)`;
     { const center=(cam+dW/2)/(800*dk); for(let i=1;i<=4;i++){ $('dsc'+i).classList.toggle('boil', Math.abs(center-(i-.5))<.95); } }
-    { const bw=dW, x=bw-q*bw; $('ecgRect2').setAttribute('x',x.toFixed(1)); $('ecgRect2').setAttribute('width',(bw-x).toFixed(1));
-      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9; $('ecgDot2').setAttribute('cx',x.toFixed(1)); $('ecgDot2').setAttribute('cy',ecgY(x).toFixed(1));
-      const mt=ease(seg(dq,.80,.855)), jb=$('joinCl');
-      $('ecgDot2').setAttribute('r',(3*pulse+mt*10).toFixed(2)); $('ecgDot2').setAttribute('opacity',(1-seg(dq,.83,.85)).toFixed(2));
-      $('ecgBase2').setAttribute('opacity',(1-mt).toFixed(2)); $('ecgFill2').setAttribute('opacity',(1-mt*.9).toFixed(2));
+    { const bw=dW, jb=$('joinCl'), bx=jb.offsetLeft+jb.offsetWidth, mt=ease(seg(dq,.80,.855));
+      const x=bw-seg(dq,.17,.80)*(bw-bx); $('ecgRect2').setAttribute('x',x.toFixed(1)); $('ecgRect2').setAttribute('width',(bw-x).toFixed(1));
+      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9;
+      $('ecgDot2').setAttribute('cx',(x-mt*16).toFixed(1)); $('ecgDot2').setAttribute('cy',lerp(ecgY(x),15,mt).toFixed(1));
+      $('ecgDot2').setAttribute('r',(3.2*pulse*(1-mt)+mt*11).toFixed(2)); $('ecgDot2').setAttribute('opacity',(1-seg(mt,.55,1)).toFixed(2));
+      $('ecgBase2').setAttribute('opacity',1); $('ecgFill2').setAttribute('opacity',1);
       jb.style.clipPath=`inset(0 0 0 ${((1-mt)*100).toFixed(1)}%)`; jb.style.opacity=(1-seg(dq,.9,.93)).toFixed(2); jb.classList.toggle('live',mt>.9&&dq<.9); }
     // calendar: one more day without money crossed out as the scene goes on
     { const n=Math.floor(seg(q,.04,.24)*28.99); calXs.forEach((x,i)=>x.setAttribute('opacity', i<n?1:0)); }
@@ -635,12 +636,12 @@
     time/=1000;
     { const r=story.getBoundingClientRect(); if(r.bottom<-innerHeight||r.top>innerHeight*2){ requestAnimationFrame(frame); return; } }
     p += (target-p)*(reduce?1:.14);
-    { const bw=$('bar').clientWidth; const x=p*bw; $('ecgRect').setAttribute('width',x.toFixed(1));
-      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9; $('ecgDot').setAttribute('cx',x.toFixed(1)); $('ecgDot').setAttribute('cy',ecgY(x).toFixed(1));
-      // the dot flows into the button: line fades, dot swells, pill opens from the right
-      const mt=ease(seg(p,.955,.995)), jb=$('joinCo'), bh=$('bar').clientHeight;
-      $('ecgDot').setAttribute('r',(3*pulse+mt*10).toFixed(2)); $('ecgDot').setAttribute('opacity',(1-seg(p,.975,.99)).toFixed(2));
-      $('ecgBase').setAttribute('opacity',(1-mt).toFixed(2)); $('ecgFill').setAttribute('opacity',(1-mt*.9).toFixed(2));
+    { const jb=$('joinCo'), bx=jb.offsetLeft, mt=ease(seg(p,.955,.995));
+      const x=seg(p,0,.955)*bx; $('ecgRect').setAttribute('width',(x+mt*bx*.02).toFixed(1));
+      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9;
+      $('ecgDot').setAttribute('cx',(x+mt*16).toFixed(1)); $('ecgDot').setAttribute('cy',lerp(ecgY(x),15,mt).toFixed(1));
+      $('ecgDot').setAttribute('r',(3.2*pulse*(1-mt)+mt*11).toFixed(2)); $('ecgDot').setAttribute('opacity',(1-seg(mt,.55,1)).toFixed(2));
+      $('ecgBase').setAttribute('opacity',1); $('ecgFill').setAttribute('opacity',1);
       jb.style.clipPath=`inset(0 ${((1-mt)*100).toFixed(1)}% 0 0)`; jb.classList.toggle('live',mt>.9); }
     const ci = p<.12?0:p<.24?1:p<.38?2:p<.5?3:p<.86?4:5; 
 
