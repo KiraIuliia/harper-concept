@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harper Health Network - Same Luis. Different ending.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Space+Mono:wght@400;700&family=Shantell+Sans:wght@400;600&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#1CA5BA; --navy:#122749; --bg:#f4efe4;--line:#1b1d22; --black:#050608; --white:#fbfaf6; --chalk:#e9e6dd; --red:#ff3b30; --paper:#fffdf8; --gray:#8a909c;
+    --mono:"Space Mono",ui-monospace,monospace; --big:"Big Shoulders Display",Impact,sans-serif; --hand:"Shantell Sans",cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--line);font-family:Figtree,system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body.locked{overflow:hidden}
+  a{color:inherit}
+  .mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;font-size:11px;line-height:1.5}
+  .big{font-family:var(--big);font-weight:900;text-transform:uppercase;line-height:.86}
+  .t{color:var(--teal)} .r{color:var(--red)}
+
+  /* loader */
+  #loader{position:fixed;inset:0;z-index:100;background:var(--bg);color:var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .6s,visibility .6s}
+  #loader.gone{opacity:0;visibility:hidden}
+  #count{font-family:var(--big);font-weight:900;font-size:76px;line-height:1;color:var(--line)}
+  #loader .rule{width:150px;height:2px;background:#1b1d2222;overflow:hidden}
+  #loader .rule span{display:block;height:100%;background:var(--teal);transform-origin:left;transform:scaleX(0)}
+  #enter{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--line);background:none;border:1.5px solid #1b1d2266;padding:10px 14px;cursor:pointer;opacity:0;transition:opacity .4s,border-color .2s}
+  #enter.on{opacity:1} #enter:hover{border-color:var(--teal)} #enter i{font-style:normal;color:#1b1d2277}
+
+  /* top + bottom chrome */
+  .logo{position:fixed;top:14px;left:16px;z-index:40}
+  .logo img{height:38px;transition:filter .3s}
+  body.dark .logo img{filter:brightness(0) invert(1)}
+  body.dark .topcta{background:#fbfaf6;color:#122749;border-color:#fbfaf6}
+  .topcta{border-radius:999px;padding:9px 18px}
+  .topcta:hover,body.dark .topcta:hover{background:var(--teal);border-color:var(--teal);color:#fff}
+  .topcta{position:fixed;top:14px;right:16px;z-index:40}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--bg);background:var(--line);padding:9px 12px;border:1.5px solid var(--line);transition:background .2s,color .2s,border-color .2s}
+  .pill:hover{background:var(--teal);border-color:var(--teal);color:#fff}
+  .pill.line{background:transparent;color:inherit;border-color:currentColor}
+  .bar{position:fixed;left:0;right:0;bottom:0;height:34px;z-index:40;display:flex;align-items:center;padding:0;background:none;border:0;color:#1b1d2299;transition:opacity .4s}
+  .bar.off{opacity:0;pointer-events:none}
+  #ecg{width:100%;height:100%;display:block}
+  .join{position:absolute;bottom:5px;height:28px;display:inline-flex;align-items:center;padding:0 16px;border-radius:999px;background:#1CA5BA;color:#fff;text-decoration:none;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;clip-path:inset(0 0 0 100%);pointer-events:none;z-index:3;transition:background .2s}
+  .join:hover{background:#122749}
+  .join.jr{right:12px} .join.jl{left:12px;clip-path:inset(0 100% 0 0)}
+  .join{will-change:clip-path,opacity}
+  .join.live{pointer-events:auto}
+
+  .track{flex:1;height:8px;position:relative;background:repeating-linear-gradient(90deg,#1b1d2240 0 1px,transparent 1px 6px)}
+  .track span{position:absolute;left:0;top:0;bottom:0;width:0;background:repeating-linear-gradient(90deg,var(--teal) 0 1px,transparent 1px 3px)}
+
+  /* hero */
+  .hero{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:90px 18px 80px;position:relative;overflow:hidden}
+  .hero h1{font-size:clamp(3.6rem,17vw,12rem);color:var(--navy)}
+  .hero p{max-width:34ch;margin-top:18px;color:#2b3a55}
+  .hero .hint{margin-top:26px;color:#1b1d2288}
+  .hero .hint b{display:inline-block;animation:nudge 1.6s infinite}
+  @keyframes nudge{50%{transform:translateY(5px)}}
+
+  /* story */
+  .story{height:1000vh;position:relative}
+  .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--bg)}
+  #st{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #words{position:absolute;inset:0;pointer-events:none}
+  .w{position:absolute;left:0;top:0;white-space:nowrap;opacity:0;will-change:transform,opacity;font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;font-size:11px;color:#1b1d22d9;transition:color .3s}
+  .w.big{white-space:normal;text-align:center;font-family:var(--big);font-weight:900;font-size:clamp(28px,8vw,64px);letter-spacing:0;line-height:.9;color:var(--navy)}
+  #words.inv .w{color:#fbfaf6} #words.inv .w.t{color:var(--teal)}
+  .w.t{color:var(--teal)} .w.r{color:var(--red)}
+  .w.box{background:var(--teal);color:#fff;padding:1px 5px}
+  #oldLog{position:absolute;top:64px;width:25%;right:0;padding:0 8px;text-align:center;opacity:0}
+  #oldLog p{font-family:var(--mono);text-transform:uppercase;font-size:9.5px;letter-spacing:.05em;line-height:1.35;color:#9aa0ab;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s;margin-bottom:7px}
+  #oldLog p.on{opacity:1;transform:none}
+  #oldLog p.hd{color:#d4d7dd;font-weight:700}
+  #oldLog p.rr{color:var(--red)}
+
+  #luis{--lfill:url(#lg);--larm:#a2d9dc;--ls:#1b1d22}
+  #luis.inv{--lfill:#fbfaf6;--larm:#fbfaf6;--ls:#fbfaf6}
+  /* contacts: the ink lands here */
+  .contact{background:var(--navy);color:var(--white);padding:70px 0 90px;position:relative;overflow:hidden}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  .contact h2{font-family:var(--big);font-weight:900;text-transform:uppercase;line-height:.88;font-size:clamp(3.2rem,15vw,8.5rem)}
+  .contact p{margin:18px 0 26px;max-width:34ch;color:#ffffffcc}
+  .contact .row{display:flex;gap:10px;flex-wrap:wrap}
+  .contact .pill{background:#fbfaf6;color:#050608;border-color:#fbfaf6} .contact .pill.line{background:transparent;color:#fbfaf6}
+  .contact .kick{color:var(--teal)}
+  .jumper{width:140px;margin:0 0 10px -6px;overflow:visible;display:block}
+  .jumper g{animation:hop 1.4s infinite cubic-bezier(.3,0,.4,1)}
+  @keyframes hop{0%,100%{transform:translateY(0) scale(1.06,.94)}12%{transform:translateY(0) scale(1)}45%{transform:translateY(-60px) scale(.97,1.04)}78%{transform:translateY(0) scale(1)}}
+
+  /* paper sections */
+  .paper{background:var(--paper);color:var(--navy)}
+  .sec{padding:80px 0}
+  .kick{display:block;margin-bottom:12px;color:var(--teal)}
+  .paper h2{font-family:var(--big);font-weight:900;text-transform:uppercase;line-height:.88;font-size:clamp(3rem,13vw,7rem);color:var(--navy)}
+  .price{background:var(--navy);color:#fff}
+  .price h2{color:#fff}
+  .calc{margin-top:30px;background:var(--paper);color:var(--navy);padding:22px;max-width:540px}
+  .calc label{display:flex;justify-content:space-between;align-items:baseline}
+  .calc output{font-family:var(--big);font-weight:900;font-size:2.6rem}
+  input[type=range]{width:100%;margin:14px 0 6px;accent-color:var(--teal);height:28px}
+  .calc .total{display:flex;align-items:baseline;gap:10px;border-top:1.5px dashed #12274940;padding-top:14px;margin-top:10px}
+  .calc .total b{font-family:var(--big);font-weight:900;font-size:3.6rem;line-height:1}
+  .calc small{display:block;color:#6a7690;margin-top:8px}
+  .cards{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:20px;padding:30px 20px 20px;margin:0 -20px;scrollbar-width:none}
+  .cards::-webkit-scrollbar{display:none}
+  .pol{flex:0 0 74%;max-width:300px;scroll-snap-align:start;background:#fff;padding:12px 12px 16px;border:1.5px solid #1b1d2222;box-shadow:0 12px 26px -16px #12274966;transform:rotate(var(--r,0deg))}
+  .ph{aspect-ratio:4/5;background:repeating-linear-gradient(-45deg,#eef3f4 0 10px,#f8fafa 10px 20px);display:flex;align-items:center;justify-content:center;text-align:center;color:#7a8396;padding:14px;border:1.5px dashed #9fb0b5}
+  .pol figcaption{font-family:var(--hand);margin-top:10px;font-size:15px;line-height:1.3}
+  .pol figcaption span{display:block;color:#7a8396;font-size:13px}
+  footer{background:var(--navy);border-top:1px solid #ffffff18;color:#ffffff66;padding:30px 0 50px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;align-items:center}
+  footer img{height:32px;filter:brightness(0) invert(1);opacity:.8}
+
+
+  /* price: grows out of the navy flood */
+  .price2{background:var(--navy);color:#fbfaf6;padding:40px 0 100px;position:relative}
+  .ph2{font-family:var(--big);font-weight:900;text-transform:uppercase;line-height:.88;font-size:clamp(3rem,13vw,7.4rem);display:flex;flex-direction:column}
+  .rv2{opacity:0;transform:translateY(40px);transition:opacity .8s, transform .8s cubic-bezier(.2,.8,.2,1)}
+  .rv2.in{opacity:1;transform:none}
+  .ph2 .ln:nth-child(2){transition-delay:.15s}
+  .calc2{display:grid;gap:30px;margin-top:36px;align-items:end}
+  .team{display:grid;grid-template-columns:repeat(10,1fr);gap:10px 3px;min-height:130px;align-content:end}
+  .m{width:100%;max-width:56px;justify-self:center;opacity:0;transform:translateY(16px) scale(.6);transition:opacity .35s, transform .45s cubic-bezier(.3,1.6,.5,1)}
+  .m.on{opacity:1;transform:none}
+  .m .cn{transform:translateY(-40px);opacity:0;transition:transform .5s cubic-bezier(.5,0,.6,1.4) .18s, opacity .3s .18s}
+  .m.on .cn{transform:none;opacity:1}
+  .ctrl label{display:flex;justify-content:space-between;align-items:baseline;color:#fbfaf6cc}
+  .ctrl output{font-family:var(--big);font-weight:900;font-size:2.4rem;color:#fbfaf6;font-variant-numeric:tabular-nums}
+  .ctrl input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:34px;margin:10px 0 10px;background:transparent;cursor:pointer;--fill:33%}
+  .ctrl input[type=range]:focus{outline:none}
+  .ctrl input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,#1CA5BA 0 var(--fill),#ffffff26 var(--fill) 100%)}
+  .ctrl input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:#ffffff26}
+  .ctrl input[type=range]::-moz-range-progress{height:8px;border-radius:99px;background:#1CA5BA}
+  .ctrl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;margin-top:-11px;border-radius:50%;background:#1CA5BA;border:3px solid #fbfaf6;box-shadow:0 4px 14px #0006;transition:transform .15s}
+  .ctrl input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#1CA5BA;border:3px solid #fbfaf6;box-shadow:0 4px 14px #0006}
+  .ctrl input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15)}
+  .ctrl input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid #fbfaf699;outline-offset:2px}
+  .sum{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;border-top:1.5px dashed #ffffff30;padding-top:14px}
+  .sum span{white-space:nowrap}
+  .sum b{font-variant-numeric:tabular-nums;min-width:5ch}
+  .sum b{font-family:var(--big);font-weight:900;font-size:clamp(3.6rem,14vw,6rem);line-height:1;color:#fbfaf6}
+  .note{color:#ffffff88;margin:10px 0 22px;font-size:10.5px}
+  .price2 .pill{background:#fbfaf6;color:var(--navy);border-color:#fbfaf6}
+  .price2 .pill:hover{background:var(--teal);border-color:var(--teal);color:#fff}
+
+  /* doctors: horizontal story */
+  .docs{height:780vh;position:relative;background:var(--navy)}
+  .dstage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--navy)}
+  #pour,#pour2{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #pour2{z-index:4;pointer-events:none} #dnext{z-index:5}
+  .dask{position:absolute;left:0;right:0;top:50%;text-align:center;font-size:clamp(3.4rem,15vw,9rem);color:var(--navy);opacity:0;transform:translateY(-50%);z-index:3;pointer-events:none}
+  .dhead,.dfoot,#ecg2{transition:opacity .3s}
+  #ecg2{position:absolute;left:0;right:0;bottom:0;width:100%;height:34px;z-index:2}
+  .dhead{position:absolute;top:66px;left:16px;right:16px;display:flex;justify-content:space-between;color:#1b1d2299;z-index:2}
+  #dtrack{position:absolute;left:0;top:50%;will-change:transform;overflow:visible}
+  #dtrack .dt{font-family:var(--big);font-weight:900;font-size:46px;fill:#122749}
+  #dtrack .dm{font-family:var(--mono);font-size:12px;letter-spacing:1px;fill:#1b1d2299}
+  #dtrack .dh{font-family:var(--hand);font-size:17px;fill:#1CA5BA}
+  .dfoot{position:absolute;left:16px;right:16px;bottom:40px;display:flex;align-items:center;gap:16px;z-index:2}
+  #djoin{opacity:0;transition:opacity .4s}
+  #djoin.on{opacity:1}
+  .dprog{flex:1;height:3px;background:#1b1d2218}
+  .dprog span{display:block;height:100%;width:0;background:var(--teal)}
+  @media (min-width:760px){
+    .calc2{grid-template-columns:1.3fr 1fr;gap:60px}
+    .team{grid-template-columns:repeat(10,1fr)}
+    .note{font-size:11px}
+    .dhead{left:40px;right:40px;top:76px}
+    .dfoot{left:40px;right:40px}
+  }
+
+  @media (min-width:760px){
+    .hero{padding:110px 40px 90px}
+    .w{font-size:13px}
+    #oldLog p{font-size:11px}
+    .cards{margin:0;padding-left:4px;overflow:visible}
+    .pol{flex:1 1 0}
+    .sec{padding:110px 0}
+  }
+  /* all buttons: round, always turn blue on hover */
+  .pill{border-radius:999px;padding:9px 18px}
+  .pill:hover,.pill.line:hover,.contact .pill:hover,.contact .pill.line:hover,.price2 .pill:hover,body.dark .pill:hover{background:var(--teal);border-color:var(--teal);color:#fff}
+  #enter{border-radius:999px;padding:10px 18px;transition:opacity .4s,background .2s,border-color .2s,color .2s}
+  #enter:hover{background:var(--teal);border-color:var(--teal);color:#fff}
+  #enter:hover i{color:#ffffffcc}
+</style>
+</head>
+<body class="locked">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="boil" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence id="turb" type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="1"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.4"/>
+  </filter>
+</svg>
+
+<div id="loader">
+  <div id="count">0</div>
+  <div class="rule"><span id="rule"></span></div>
+  <button id="enter">ENTER <i>MEET LUIS</i></button>
+</div>
+
+<a class="logo" href="#top"><img src="data:image/webp;base64,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" alt="Harper Health Network"></a>
+<a class="topcta pill" href="#talk">Talk to us</a>
+<div class="bar" id="bar"><svg id="ecg" aria-hidden="true"><defs><clipPath id="ecgClip"><rect id="ecgRect" x="0" y="0" width="0" height="40"/></clipPath></defs><path id="ecgBase" fill="none" stroke="#1b1d2230" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><path id="ecgFill" clip-path="url(#ecgClip)" fill="none" stroke="#1CA5BA" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle id="ecgDot" r="3.2" fill="#1CA5BA"/></svg><a class="join jr" id="joinCo" href="#talk">Join as a company +</a></div>
+
+<section class="hero" id="top">
+  <span class="mono t" style="margin-bottom:14px">health care for small teams in dallas-fort worth</span>
+  <h1 class="big">Same Luis.<br><span class="t">Different<br>ending.</span></h1>
+  <p>One flat monthly price per employee. Credits your team spends at local clinics. Harper pays the doctor. No insurance, no claim forms.</p>
+  <div class="hint mono">scroll to watch <b>↓</b></div>
+</section>
+
+<section class="story" id="story">
+  <div class="stage">
+    <svg id="st" aria-label="Animated story: Luis gets sick. With Harper, his company's credits pay a local doctor the same day and he jumps for joy. Without Harper, he gets coverage, a deductible, a waiting room, and the doctor gets a claim form.">
+      <g class="boil">
+        <path id="ground" fill="none" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round"/>
+
+        <!-- poof -->
+        <g id="poof"><path id="poofPath" fill="#f4efe4" stroke="#1b1d22" stroke-width="2.6" stroke-linejoin="round"/></g>
+
+        <!-- employer -->
+        <g id="emp" opacity="0"><circle cx="-5" cy="-112" r="15" fill="#122749"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="#122749"/><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#122749" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M14 -84 C 22 -72 24 -62 24 -54" fill="none" stroke="#122749" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" id="empArm"/><path d="M-7 -90 L -10 -70 L -6 -63 L -2 -70 L -4 -90 Z" fill="#fbfaf6"/><text x="-46" y="-140" font-family="Space Mono" font-size="10" fill="#1b1d2299" letter-spacing="1">HIS COMPANY</text>
+        </g>
+
+        <!-- doctor + door -->
+        <g id="doc" opacity="0"><path d="M40 -154 L98 -166 L104 -162 L104 4 L98 7 L40 -4 L48 -10 L96 -2 L96 -156 L48 -146 Z" fill="url(#dg)"/><circle cx="58" cy="-80" r="5" fill="#a2d9dc"/><path d="M70 -182 L70 -198 M62 -190 L78 -190" stroke="#1b1d22" stroke-width="3" stroke-linecap="round"/><circle cx="-5" cy="-112" r="15" fill="url(#dg)"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="url(#dg)"/><path d="M-29 -84 C -29 -88 -25 -91 -20 -91 L 6 -91 C 13 -91 18 -86 18 -78 L 17 -40 L -29 -40 Z" fill="#ffffff"/><path d="M-14 -91 L -5 -66 L 4 -91 M-5 -66 L -5 -40" fill="none" stroke="#9fb3c8" stroke-width="2.2" stroke-linecap="round"/><path d="M6 -60 L 14 -60" stroke="#9fb3c8" stroke-width="2" stroke-linecap="round"/><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path id="docMouthN" d=""/><path id="docMouthH" d=""/><text x="12" y="-210" font-family="Space Mono" font-size="10" fill="#1b1d2299" letter-spacing="1">LOCAL CLINIC</text>
+        </g>
+      </g>
+
+      <!-- the ink -->
+      <path id="drip" fill="#050608"/>
+      <defs><linearGradient id="poolGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="0"><stop id="pg0" offset="0" stop-color="#050608"/><stop id="pg1" offset="1" stop-color="#050608"/></linearGradient></defs>
+      <path id="pool" fill="url(#poolGrad)"/>
+
+      <!-- the old way, inside the black quarter -->
+      <g id="old" class="boil" opacity="0">
+        <g id="chairs" opacity="0">
+          <path d="M-96 0 L-96 -30 L-50 -30 L-50 0 M-46 -30 L46 -30 M50 0 L50 -30 L96 -30 L96 0" fill="none" stroke="#8a909c" stroke-width="2.2" stroke-linecap="round"/>
+          <g transform="translate(-73 -30) scale(.5)"><circle cx="-5" cy="-112" r="15" fill="#8a909c"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="#8a909c"/><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="#8a909c" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#8a909c" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></g><g transform="translate(73 -30) scale(.48)"><circle cx="-5" cy="-112" r="15" fill="#8a909c"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="#8a909c"/><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="#8a909c" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#8a909c" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></g>
+        </g>
+        <g id="clock" opacity="0">
+          <circle r="20" fill="#050608" stroke="#8a909c" stroke-width="2.2"/>
+          <path id="hMin" d="M0 0 L0 -14" stroke="#8a909c" stroke-width="2.2" stroke-linecap="round"/>
+          <path id="hHr" d="M0 0 L8 0" stroke="#8a909c" stroke-width="2.6" stroke-linecap="round"/>
+        </g>
+        <g id="emp2" opacity="0"><circle cx="-5" cy="-112" r="15" fill="#8a909c"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="#8a909c"/><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#8a909c" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="#8a909c" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-7 -90 L -10 -70 L -6 -63 L -2 -70 L -4 -90 Z" fill="#050608"/></g>
+        <g id="doc2" opacity="0"><circle cx="-5" cy="-112" r="15" fill="#8a909c"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="#8a909c"/><path d="M-29 -84 C -29 -88 -25 -91 -20 -91 L 6 -91 C 13 -91 18 -86 18 -78 L 17 -40 L -29 -40 Z" fill="#3a3f48"/><path d="M-14 -91 L -5 -66 L 4 -91 M-5 -66 L -5 -40" fill="none" stroke="#8a909c" stroke-width="2.2" stroke-linecap="round"/><path d="M6 -60 L 14 -60" stroke="#8a909c" stroke-width="2" stroke-linecap="round"/><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="#3a3f48" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#3a3f48" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></g>
+        <g id="card" opacity="0">
+          <rect x="-26" y="-17" width="52" height="34" rx="4" fill="#3a3f48" stroke="#8a909c" stroke-width="2"/>
+          <text x="0" y="4" text-anchor="middle" font-family="Space Mono" font-size="8" fill="#c9ccd2" letter-spacing=".5">COVERAGE</text>
+        </g>
+        <g id="paper" opacity="0">
+          <path d="M-20 -28 L18 -30 L22 28 L-17 30 Z" fill="#d9d6cf" stroke="#8a909c" stroke-width="2"/>
+          <path d="M-12 -16 L12 -17 M-12 -6 L10 -7 M-11 4 L13 3 M-11 14 L4 13" stroke="#6b6f78" stroke-width="2" stroke-linecap="round"/>
+          <text x="0" y="-36" text-anchor="middle" font-family="Space Mono" font-size="9" fill="#9aa0ab">CLAIM</text>
+        </g>
+        <g id="luis2" opacity="0"><circle cx="-5" cy="-112" r="15" fill="#fbfaf6"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="#fbfaf6"/><path d="M14 -84 C 20 -72 14 -62 2 -58" fill="none" stroke="#fbfaf6" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -82 C -30 -70 -22 -60 -10 -58" fill="none" stroke="#fbfaf6" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><g transform="translate(-6 -58)"><g class="lumpPulse">
+            <path d="M-24 -12 L-32 -18 M24 -12 L32 -18 M-26 8 L-35 10 M26 8 L35 10 M0 -24 L0 -32" stroke="#ff3b30" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M-13 0 C -14 -14 12 -16 13 -2 C 14 12 -10 14 -12 2 C -13 -7 5 -9 6 -1 C 7 5 -3 6 -3 0" fill="#ff3b30" stroke="#b31b14" stroke-width="2.2" stroke-linecap="round"/>
+          </g></g>
+        </g>
+      </g>
+
+      <!-- final flood that carries everything into the contact block -->
+      <path id="flood" fill="#122749"/>
+
+      <!-- coins + Luis on top -->
+      <g id="coins"></g>
+      <g id="luis"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe9e8"/><stop offset="1" stop-color="#86cbd2"/></linearGradient><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#92c0ea"/><stop offset="1" stop-color="#4f7fd6"/></linearGradient></defs>
+        <g id="luisIn">
+          <path id="sparks" d="M-64 -132 L-74 -144 M-50 -146 L-53 -160 M58 -134 L68 -146 M44 -148 L47 -162 M-4 -150 L-4 -166" style="fill:none;stroke:var(--ls)" stroke-width="2.6" stroke-linecap="round" opacity="0"/>
+          <circle cx="-5" cy="-112" r="15" style="fill:var(--lfill)"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" style="fill:var(--lfill)"/>
+          <path id="mN" d=""/><path id="mS" d=""/><path id="mH" d=""/>
+          <path id="drop" d="M14 -128 C 10 -120 12 -114 17 -114 C 22 -114 22 -120 14 -128 Z" style="fill:#fff;stroke:var(--ls)" stroke-width="2" opacity="0"/>
+          <path d="M14 -84 C 20 -72 22 -62 22 -54 M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" id="armsD" style="stroke:var(--larm)"/>
+          <path d="M14 -84 C 20 -72 14 -62 2 -58 M-26 -82 C -30 -70 -22 -60 -10 -58" fill="none" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" id="armsP" opacity="0" style="stroke:var(--larm)"/>
+          <path d="M14 -86 C 22 -100 28 -112 32 -124 M-26 -86 C -32 -100 -38 -112 -42 -124" fill="none" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" id="armsU" opacity="0" style="stroke:var(--larm)"/>
+          <g id="lump" transform="translate(-6 -58) scale(0)"><g class="lumpPulse">
+            <path id="rays" d="M-24 -12 L-32 -18 M24 -12 L32 -18 M-26 8 L-35 10 M26 8 L35 10 M0 -24 L0 -32" stroke="#ff3b30" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M-13 0 C -14 -14 12 -16 13 -2 C 14 12 -10 14 -12 2 C -13 -7 5 -9 6 -1 C 7 5 -3 6 -3 0" fill="#ff3b30" stroke="#b31b14" stroke-width="2.2" stroke-linecap="round"/>
+          </g></g>
+        </g>
+      </g>
+    </svg>
+
+    <div id="words"></div>
+    <div id="oldLog">
+      <p class="hd" data-at=".565">without harper</p>
+      <p data-at=".61">no credits.<br>"you have coverage."</p>
+      <p class="rr" data-at=".67">deductible: ~$1,900</p>
+      <p data-at=".72">waiting room.<br>the bill comes later.</p>
+      <p data-at=".79">doctor gets a claim.<br>paid in 30-45 days,<br>if it is clean.</p>
+      <p class="hd" data-at=".83">everyone: sad.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE: the navy flood turns into this -->
+<section class="price2" id="price">
+  <div class="wrap">
+    <span class="kick mono rv2">so, the real question</span>
+    <h2 class="ph2"><span class="ln rv2">What would it cost</span><span class="ln rv2 t">your company?</span></h2>
+    <div class="calc2">
+      <div class="team" id="team" aria-hidden="true"></div>
+      <div class="ctrl rv2">
+        <label for="staff" class="mono">your team: <output id="staffOut">18</output> people</label>
+        <input id="staff" type="range" min="12" max="30" value="18" aria-label="Number of employees">
+        <div class="sum"><b id="total">$1,782</b><span class="mono">/ month, all in</span></div>
+        <p class="mono note">placeholder rate: $99 per person per month. every blue coin = credits for local care.</p>
+        <a class="pill" href="#talk">get real numbers +</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOCTORS: horizontal story -->
+<section class="docs" id="doctors">
+  <div class="dstage">
+    <svg id="pour" aria-hidden="true"><path id="pourPath" fill="#f4efe4"/></svg>
+    <div class="dask big" id="dask">And for<br><span class="t">doctors?</span></div>
+    <svg id="pour2" aria-hidden="true"><path id="pour2Path" fill="#122749"/></svg>
+    <div class="dask big" id="dnext" style="color:#fbfaf6">Your team<br><span class="t">is next.</span></div>
+    <div class="dhead mono"><span>for doctors and clinics</span></div>
+    <svg id="dtrack" viewBox="0 0 3200 500" aria-label="Animated story: a doctor with empty chairs and piles of insurance claims signs one page with Harper, gets new patients the next week, and gets paid directly the same day."><defs><linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe9e8"/><stop offset="1" stop-color="#86cbd2"/></linearGradient><linearGradient id="dgT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#92c0ea"/><stop offset="1" stop-color="#4f7fd6"/></linearGradient></defs>
+      <path d="M0 420 C 400 414, 800 424, 1200 417 S 2000 422, 2400 418 S 3000 420, 3200 418" fill="none" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round" class="boil"/>
+
+      <!-- SCENE 1: empty chairs, piles of claims -->
+      <g class="boil dsc" id="dsc1">
+        <text x="140" y="92" class="dt">MEET</text>
+        <text x="140" y="140" class="dt">DR. PLACEHOLDER.</text>
+        <text x="142" y="168" class="dm">FAMILY CLINIC, FORT WORTH</text>
+        <!-- chairs -->
+        <g fill="none" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round">
+          <path d="M150 420 L150 380 L200 380 L200 420 M150 380 L150 340"/>
+          <path d="M220 420 L220 380 L270 380 L270 420 M220 380 L220 340"/>
+          <path d="M290 420 L290 380 L340 380 L340 420 M290 380 L290 340"/>
+        </g>
+        <text x="160" y="320" class="dh" id="d1a" opacity="0">chairs: empty</text>
+        <!-- calendar -->
+        <g transform="translate(560 170)">
+          <rect x="0" y="0" width="96" height="84" rx="4" fill="#fff" stroke="#1b1d22" stroke-width="2.4"/>
+          <path d="M0 22 L96 22 M22 -8 L22 10 M74 -8 L74 10" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round"/>
+          <text x="48" y="48" text-anchor="middle" class="dm" style="font-size:11px">PAID IN</text>
+          <text x="48" y="68" text-anchor="middle" class="dm" style="font-size:11.5px;letter-spacing:0;fill:#ff3b30">30-45 DAYS</text>
+        </g>
+        <!-- doctor behind desk -->
+        <g transform="translate(470 420)">
+          <g transform="scale(1.15)"><circle cx="-5" cy="-112" r="15" fill="url(#dgT)"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="url(#dgT)"/><path d="M-29 -84 C -29 -88 -25 -91 -20 -91 L 6 -91 C 13 -91 18 -86 18 -78 L 17 -40 L -29 -40 Z" fill="#ffffff"/><path d="M-14 -91 L -5 -66 L 4 -91 M-5 -66 L -5 -40" fill="none" stroke="#9fb3c8" stroke-width="2.2" stroke-linecap="round"/><path d="M6 -60 L 14 -60" stroke="#9fb3c8" stroke-width="2" stroke-linecap="round"/><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></g>
+        </g>
+        <path d="M380 342 L620 340 L620 420 L392 420 L392 342 Z" fill="#f4efe4" stroke="#1b1d22" stroke-width="2.6" stroke-linejoin="round"/>
+        <!-- claims pile -->
+        <g id="pile"></g>
+        <text x="570" y="270" class="dh" id="d1b" opacity="0" text-anchor="middle">claims: piling up</text>
+      </g>
+
+      <!-- SCENE 2: one page, one signature -->
+      <g class="boil dsc" id="dsc2">
+        <text x="940" y="92" class="dt">ONE PAGE.</text>
+        <text x="940" y="140" class="dt" fill="#1CA5BA" style="fill:#1CA5BA">ONE SIGNATURE.</text>
+        <g transform="translate(1040 168) rotate(-3)">
+          <rect x="0" y="0" width="230" height="250" fill="#fff" stroke="#1b1d22" stroke-width="2.6"/>
+          <rect x="0" y="0" width="230" height="40" fill="#1CA5BA"/>
+          <text x="14" y="27" style="font-family:'Big Shoulders Display',Impact;font-weight:900;font-size:20px;fill:#fff;letter-spacing:.5px">HARPER PROVIDER</text>
+          <path d="M18 66 L200 64 M18 84 L190 83 M18 102 L206 101 M18 120 L170 119 M18 138 L196 137 M18 156 L120 155" stroke="#b9bcc2" stroke-width="3" stroke-linecap="round"/>
+          <path d="M18 216 L150 214" stroke="#1b1d22" stroke-width="2" stroke-linecap="round"/>
+          <text x="18" y="234" class="dm" style="font-size:9px">DR. PLACEHOLDER</text>
+          <path id="sig" d="M24 206 C 34 180, 44 182, 40 204 C 38 216, 56 178, 66 196 C 72 208, 78 186, 90 194 C 100 200, 108 188, 126 192 L 146 186" fill="none" stroke="#122749" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" style="stroke-dasharray:1;stroke-dashoffset:1"/>
+          <g id="stamp" opacity="0" transform="translate(178 196) rotate(-14)">
+            <rect x="-38" y="-17" width="76" height="34" rx="4" fill="none" stroke="#1CA5BA" stroke-width="3"/>
+            <text x="0" y="7" text-anchor="middle" style="font-family:'Space Mono';font-weight:700;font-size:15px;fill:#1CA5BA">SIGNED</text>
+          </g>
+        </g>
+        <g transform="translate(1400 420)">
+          <g transform="scale(1.15)"><circle cx="-5" cy="-112" r="15" fill="url(#dgT)"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="url(#dgT)"/><path d="M-29 -84 C -29 -88 -25 -91 -20 -91 L 6 -91 C 13 -91 18 -86 18 -78 L 17 -40 L -29 -40 Z" fill="#ffffff"/><path d="M-14 -91 L -5 -66 L 4 -91 M-5 -66 L -5 -40" fill="none" stroke="#9fb3c8" stroke-width="2.2" stroke-linecap="round"/><path d="M6 -60 L 14 -60" stroke="#9fb3c8" stroke-width="2" stroke-linecap="round"/><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></g>
+          <path id="penArm" d="M-30 -95 C -60 -102 -90 -112 -120 -120" fill="none" stroke="#ffffff" stroke-width="15" stroke-linecap="round"/>
+          <g id="pen" transform="translate(-120 -120) rotate(-30)"><path d="M0 0 L-26 -6" stroke="#122749" stroke-width="5" stroke-linecap="round"/></g>
+        </g>
+        <text x="1040" y="460" class="dh" id="d2a" opacity="0">no insurance billing.</text>
+      </g>
+
+      <!-- SCENE 3: patients the next week -->
+      <g class="boil dsc" id="dsc3">
+        <text x="1740" y="92" class="dt">PATIENTS,</text>
+        <text x="1740" y="140" class="dt" style="fill:#1CA5BA">THE NEXT WEEK.</text>
+        <g fill="none" stroke="#1b1d22" stroke-width="2.4" stroke-linecap="round">
+          <path d="M1880 420 L1880 380 L1930 380 L1930 420 M1880 380 L1880 340"/>
+          <path d="M1960 420 L1960 380 L2010 380 L2010 420 M1960 380 L1960 340"/>
+          <path d="M2040 420 L2040 380 L2090 380 L2090 420 M2040 380 L2040 340"/>
+        </g>
+        <g transform="translate(2232 420) scale(1.2)"><path d="M40 -154 L98 -166 L104 -162 L104 4 L98 7 L40 -4 L48 -10 L96 -2 L96 -156 L48 -146 Z" fill="url(#dgT)"/><circle cx="58" cy="-80" r="5" fill="#a2d9dc"/></g>
+        <path d="M2291 230 L2291 214 M2283 222 L2299 222" stroke="#1b1d22" stroke-width="3" stroke-linecap="round"/>
+        <g transform="translate(1780 420)">
+          <g transform="scale(1.15)"><circle cx="-5" cy="-112" r="15" fill="url(#dgT)"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="url(#dgT)"/><path d="M-29 -84 C -29 -88 -25 -91 -20 -91 L 6 -91 C 13 -91 18 -86 18 -78 L 17 -40 L -29 -40 Z" fill="#ffffff"/><path d="M-14 -91 L -5 -66 L 4 -91 M-5 -66 L -5 -40" fill="none" stroke="#9fb3c8" stroke-width="2.2" stroke-linecap="round"/><path d="M6 -60 L 14 -60" stroke="#9fb3c8" stroke-width="2" stroke-linecap="round"/><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></g>
+          <path d="M16 -97 C 30 -110 38 -124 42 -140" fill="none" stroke="#ffffff" stroke-width="15" stroke-linecap="round"/>
+        </g>
+        <g id="patients"></g>
+        <text x="1880" y="236" class="dh" id="d3a" opacity="0">from local employers on harper</text>
+      </g>
+
+      <!-- SCENE 4: paid directly -->
+      <g class="boil dsc" id="dsc4">
+        <text x="2540" y="92" class="dt">PAID DIRECTLY.</text>
+        <text x="2540" y="140" class="dt" style="fill:#1CA5BA">SAME DAY.</text>
+        <text x="2556" y="186" class="dm" style="fill:#1CA5BA">HARPER ↓</text>
+        <!-- jar -->
+        <g transform="translate(2600 420)">
+          <clipPath id="jarClip"><path d="M-46 -8 C -50 -60 -48 -120 -40 -150 L 40 -150 C 48 -120 50 -60 46 -8 C 30 2 -30 2 -46 -8 Z"/></clipPath>
+          <rect id="jarFill" x="-60" y="0" width="120" height="0" fill="#1CA5BA" clip-path="url(#jarClip)"/>
+          <path d="M-46 -8 C -50 -60 -48 -120 -40 -150 L 40 -150 C 48 -120 50 -60 46 -8 C 30 2 -30 2 -46 -8 Z" fill="none" stroke="#1b1d22" stroke-width="2.6"/>
+          <path d="M-44 -160 L44 -160" stroke="#1b1d22" stroke-width="2.6" stroke-linecap="round"/>
+        </g>
+        <g id="rain"></g>
+        <g id="doc4" transform="translate(2790 420)">
+          <g id="doc4In">
+            <path id="doc4Sp" d="M-64 -150 L-74 -162 M-50 -166 L-53 -180 M64 -150 L74 -162 M50 -166 L53 -180 M0 -172 L0 -188" fill="none" stroke="#1b1d22" stroke-width="2.6" stroke-linecap="round" opacity="0"/>
+            <g transform="scale(1.15)"><circle cx="-5" cy="-112" r="15" fill="url(#dgT)"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="url(#dgT)"/><path d="M-29 -84 C -29 -88 -25 -91 -20 -91 L 6 -91 C 13 -91 18 -86 18 -78 L 17 -40 L -29 -40 Z" fill="#ffffff"/><path d="M-14 -91 L -5 -66 L 4 -91 M-5 -66 L -5 -40" fill="none" stroke="#9fb3c8" stroke-width="2.2" stroke-linecap="round"/><path d="M6 -60 L 14 -60" stroke="#9fb3c8" stroke-width="2" stroke-linecap="round"/></g>
+            <path d="M-30 -97 C -38 -112 -44 -128 -48 -144 M16 -97 C 26 -112 32 -128 36 -144" fill="none" stroke="#ffffff" stroke-width="15" stroke-linecap="round"/>
+          </g>
+        </g>
+        <text x="2960" y="260" class="dh" id="d4a" opacity="0" text-anchor="middle">no insurer</text>
+        <text x="2960" y="280" class="dh" id="d4b" opacity="0" text-anchor="middle">in the middle</text>
+      </g>
+    </svg>
+    <svg id="ecg2" aria-hidden="true"><defs><clipPath id="ecgClip2"><rect id="ecgRect2" x="0" y="0" width="0" height="40"/></clipPath></defs><path id="ecgBase2" fill="none" stroke="#1b1d2230" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><path id="ecgFill2" clip-path="url(#ecgClip2)" fill="none" stroke="#1CA5BA" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle id="ecgDot2" r="3.2" fill="#1CA5BA"/></svg>
+    <a class="join jl" id="joinCl" href="#talk">Join as a clinic +</a>
+    <div class="dfoot"></div>
+  </div>
+</section>
+
+<section class="contact" id="talk">
+  <div class="wrap">
+    <svg class="jumper" viewBox="-90 -260 180 270" aria-hidden="true"><g><path d="M-64 -132 L-74 -144 M-50 -146 L-53 -160 M58 -134 L68 -146 M44 -148 L47 -162 M-4 -150 L-4 -166" fill="none" stroke="#fbfaf6" stroke-width="3" stroke-linecap="round"/><circle cx="-5" cy="-112" r="15" fill="#fbfaf6"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="#fbfaf6"/><path d="M14 -86 C 22 -100 28 -112 32 -124" fill="none" stroke="#fbfaf6" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -86 C -32 -100 -38 -112 -42 -124" fill="none" stroke="#fbfaf6" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></g></svg>
+    <span class="kick mono">a person answers. probably placeholder name.</span>
+    <h2>Give your team<br><span class="t">Luis's ending.</span></h2>
+    <p>Fifteen minutes with someone in Dallas, not a bot. Real numbers for your team of 12 to 30.</p>
+    <div class="row"><a class="pill" href="#talk">Book a call +</a><a class="pill line" href="#talk">(214) 000-0000</a><a class="pill line" href="#talk">hello@placeholder.com</a></div>
+  </div>
+</section>
+
+<footer><div class="wrap mono">
+  <img src="data:image/webp;base64,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" alt="Harper Health Network">
+  <span>Harper Health Network is not insurance. placeholder legal line.</span>
+  <span>© 2026 · dallas-fort worth, tx</span>
+</div></footer>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const NS='http://www.w3.org/2000/svg';
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // line boil
+  if(!reduce){ const coarse=matchMedia('(pointer: coarse)').matches; let s=1; setInterval(()=>{ s=s%3+1; $('turb').setAttribute('seed',s); }, coarse?320:160); }
+
+  // loader
+  const t0=performance.now(), dur=reduce?10:1400;
+  (function tick(now){ const k=Math.min(1,(now-t0)/dur); $('count').textContent=Math.round(k*100); $('rule').style.transform=`scaleX(${k})`; if(k<1) requestAnimationFrame(tick); else $('enter').classList.add('on'); })(t0);
+  $('enter').onclick=()=>{ $('loader').classList.add('gone'); document.body.classList.remove('locked'); };
+  if(location.hash==='#embed'){ $('loader').classList.add('gone'); document.body.classList.remove('locked'); }
+
+  // calculator
+
+  // ---------- helpers ----------
+  const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+  const seg=(p,a,b)=>clamp((p-a)/(b-a));
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  const back=t=>{ const c=1.9; return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2); };
+  const tf=(el,x,y,s,extra='')=>el.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${s.toFixed(3)})${extra}`);
+  const op=(el,v)=>el.setAttribute('opacity',clamp(v).toFixed(3));
+
+
+  // heartbeat line for the progress bar
+  const ECG_U=90, ECG_B=18;
+  function ecgPts(u){ return [[0,0],[.22,0],[.28,-3],[.34,0],[.42,0],[.46,4],[.5,-14],[.54,9],[.58,0],[.68,0],[.76,-5],[.84,0],[1,0]].map(([a,b])=>[u+a*ECG_U, ECG_B+b]); }
+  let ecgPoly=[];
+  function ecgBuild(){ const bw=$('bar').clientWidth; ecgPoly=[]; for(let u=0;u<bw+ECG_U;u+=ECG_U) ecgPoly.push(...ecgPts(u));
+    const d='M'+ecgPoly.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L'); ['ecgBase','ecgFill','ecgBase2','ecgFill2'].forEach(id=>$(id)&&$(id).setAttribute('d',d)); }
+  function ecgY(x){ for(let i=1;i<ecgPoly.length;i++){ const a=ecgPoly[i-1], b=ecgPoly[i]; if(x<=b[0]){ const t=(x-a[0])/((b[0]-a[0])||1); return a[1]+(b[1]-a[1])*t; } } return ECG_B; }
+  addEventListener('resize',ecgBuild); ecgBuild();
+  // ---------- PRICE: one little person per employee, each gets a blue coin ----------
+  const team=$('team'), rg=$('staff'), RATE=99, mini=[];
+  for(let i=0;i<30;i++){
+    const d=document.createElement('div'); d.className='m';
+    d.innerHTML='<svg viewBox="-56 -186 112 192"><g class="cn"><circle cx="-5" cy="-160" r="13" fill="#1CA5BA" stroke="#fbfaf6" stroke-width="2.4"/><path d="M-5 -166 L-5 -154" stroke="#fbfaf6" stroke-width="2.6" stroke-linecap="round"/></g><circle cx="-5" cy="-112" r="15" fill="#bfe9e8"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="#bfe9e8"/><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="#bfe9e8" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="#bfe9e8" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></svg>';
+    team.appendChild(d); mini.push(d);
+  }
+  let shown=0, priceSeen=false, curTotal=0, totAnim=null;
+  function countTo(v){ const from=curTotal, t0=performance.now(); cancelAnimationFrame(totAnim);
+    const step=now=>{ const k=Math.min(1,(now-t0)/450); curTotal=Math.round(from+(v-from)*(1-Math.pow(1-k,3))); $('total').textContent='$'+curTotal.toLocaleString('en-US'); if(k<1) totAnim=requestAnimationFrame(step); }; totAnim=requestAnimationFrame(step); }
+  let wantN=+rg.value;
+  function paintRange(){ const k=(rg.value-rg.min)/(rg.max-rg.min); rg.style.setProperty('--fill',(k*100).toFixed(1)+'%'); }
+  function setTeam(n, intro){
+    wantN=n;
+    // each timeout re-checks the latest value, so fast dragging never leaves the wrong number of people on screen
+    mini.forEach((m,i)=>{ const delay=intro? i*45 : 0; const apply=()=>m.classList.toggle('on', i<wantN); delay? setTimeout(apply,delay) : apply(); });
+    $('staffOut').textContent=n; paintRange();
+    if(intro) countTo(n*RATE); else { cancelAnimationFrame(totAnim); curTotal=n*RATE; $('total').textContent='$'+curTotal.toLocaleString('en-US'); }
+  }
+  rg.oninput=()=>setTeam(+rg.value,false); paintRange();
+  const pio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); if(e.target.id==='team'&&!priceSeen){ priceSeen=true; shown=0; setTeam(+rg.value,true); } } }),{threshold:.3});
+  document.querySelectorAll('.rv2').forEach(el=>pio.observe(el)); pio.observe(team);
+
+  // ---------- DOCTORS: horizontal scenes ----------
+  const docs=$('doctors'), dtr=$('dtrack'), pile=$('pile'), pats=$('patients'), rain=$('rain');
+  const NSd='http://www.w3.org/2000/svg';
+  const piles=[]; for(let i=0;i<7;i++){ const r=document.createElementNS(NSd,'path'); const y=338-i*9, x=536+(i%2?6:-4); r.setAttribute('d',`M${x} ${y} L${x+64} ${y-2} L${x+66} ${y-9} L${x+2} ${y-7} Z`); r.setAttribute('fill','#fff'); r.setAttribute('stroke','#1b1d22'); r.setAttribute('stroke-width','2'); r.setAttribute('opacity',0); pile.appendChild(r); piles.push(r); }
+  const patList=[]; const chairsX=[1905,1985,2065];
+  for(let i=0;i<3;i++){ const g=document.createElementNS(NSd,'g'); const h=[118,108,124][i];
+    const pc=['#a6dcdf','#86cbd2','#b4c6ea'][i]; const ps=(h/130).toFixed(3);
+    g.innerHTML=`<g transform="scale(${ps})"><circle cx="-5" cy="-112" r="15" fill="${pc}"/><path d="M-20 -90 C -26 -90 -30 -84 -30 -76 L -29 -50 C -29 -44 -27 -40 -24 -36 L -30 -6 C -31 -1 -27 2 -23 1 C -20 0 -18 -2 -17 -6 L -9 -30 L -2 -30 L 6 -4 C 7 0 11 2 15 0 C 18 -2 19 -5 18 -8 L 12 -36 C 15 -40 17 -46 17 -52 L 18 -76 C 18 -85 13 -90 6 -90 Z" fill="${pc}"/><path d="M14 -84 C 20 -72 22 -62 22 -54" fill="none" stroke="${pc}" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /><path d="M-26 -82 C -30 -72 -32 -62 -32 -54" fill="none" stroke="${pc}" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" /></g>`;
+    pats.appendChild(g); patList.push(g); }
+  const drops=[]; for(let i=0;i<12;i++){ const g=document.createElementNS(NSd,'g'); g.innerHTML='<circle r="11" fill="#1CA5BA" stroke="#1b1d22" stroke-width="2"/><path d="M0 -5 L0 5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>'; g.setAttribute('opacity',0); rain.appendChild(g); drops.push(g); }
+
+  let dk=1, dW=0, dH=0;
+  function dsize(){ const st=document.querySelector('.dstage'); dW=st.clientWidth; dH=st.clientHeight; dk=Math.min(dW/560, dH*.78/500); dtr.setAttribute('width',3200*dk); dtr.setAttribute('height',500*dk); }
+  addEventListener('resize',dsize); dsize();
+  const sceneX=i=>clamp(i*800*dk-(dW-800*dk)/2, 0, 3200*dk-dW);
+  // camera holds on each scene while it plays, then glides to the next
+  const CAM=[[0,.12,0,0],[.12,.25,0,1],[.25,.42,1,1],[.42,.55,1,2],[.55,.72,2,2],[.72,.85,2,3],[.85,1.01,3,3]];
+  let dq=0, dqT=0;
+  function dRead(){ const r=docs.getBoundingClientRect(); dqT=clamp(-r.top/(r.height-innerHeight)); }
+  addEventListener('scroll',dRead,{passive:true}); dRead();
+  function dFrame(time){
+    time/=1000;
+    { const r=docs.getBoundingClientRect(); if(r.bottom<-innerHeight||r.top>innerHeight*2){ requestAnimationFrame(dFrame); return; } }
+    dq+=(dqT-dq)*.14;
+    // intro: milky paint pours in diagonally over the navy, asks the question, then the story starts
+    const pin=dq, pour=ease(seg(pin,0,.08));
+    { const e=lerp(-dW*.9, dW*1.9, pour); let d=`M-20 -20 L${(e+dW*.35).toFixed(1)} -20`;
+      for(let y=-20;y<=dH+20;y+=24){ const x=e+dW*.35-(y/dH)*dW*.7+Math.sin(y*.02+time*2.4)*14*(1-pour)+Math.sin(y*.051-time*1.7)*8*(1-pour); d+=` L${x.toFixed(1)} ${y}`; }
+      d+=` L-20 ${dH+20} Z`; $('pourPath').setAttribute('d',d); }
+    const ask=seg(pin,.05,.08)*(1-seg(pin,.13,.16));
+    $('dask').style.opacity=ask.toFixed(3); $('dask').style.transform=`translateY(calc(-50% + ${((1-seg(pin,.05,.08))*30 - seg(pin,.13,.16)*60).toFixed(1)}px))`;
+    const trackOn=seg(pin,.14,.17);
+    dtr.style.opacity=trackOn; document.querySelector('.dhead').style.opacity=trackOn; document.querySelector('.dfoot').style.opacity=trackOn; $('ecg2').style.opacity=trackOn*(1-seg(dq,.9,.93));
+    document.querySelector('.dstage').style.background = pour>=1 ? 'var(--bg)' : 'var(--navy)';
+    const q=seg(dq,.17,.84);
+    // outro: navy pours back in from the right, mirror of the intro
+    const out=ease(seg(dq,.865,.945));
+    if(out>0){ const e=lerp(dW*1.9, -dW*.9, out); let d=`M${dW+20} -20 L${(e-dW*.35).toFixed(1)} -20`;
+      for(let y=-20;y<=dH+20;y+=24){ const x=e-dW*.35+(y/dH)*dW*.7+Math.sin(y*.02+time*2.4)*14*(1-out)+Math.sin(y*.051-time*1.7)*8*(1-out); d+=` L${x.toFixed(1)} ${y}`; }
+      d+=` L${dW+20} ${dH+20} Z`; $('pour2Path').setAttribute('d',d); } else $('pour2Path').setAttribute('d','');
+    const nx=seg(dq,.91,.945);
+    $('dnext').style.opacity=nx.toFixed(3); $('dnext').style.transform=`translateY(calc(-50% + ${((1-nx)*30).toFixed(1)}px))`;
+    let cam=0; for(const c of CAM){ if(q>=c[0]&&q<c[1]){ const t=ease(seg(q,c[0],c[1])); cam=lerp(sceneX(c[2]),sceneX(c[3]),t); break; } }
+    dtr.style.transform=`translate(${(-cam).toFixed(1)}px,-50%)`;
+    { const center=(cam+dW/2)/(800*dk); for(let i=1;i<=4;i++){ $('dsc'+i).classList.toggle('boil', Math.abs(center-(i-.5))<.95); } }
+    { const bw=dW, x=bw-q*bw; $('ecgRect2').setAttribute('x',x.toFixed(1)); $('ecgRect2').setAttribute('width',(bw-x).toFixed(1));
+      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9; $('ecgDot2').setAttribute('cx',x.toFixed(1)); $('ecgDot2').setAttribute('cy',ecgY(x).toFixed(1));
+      const mt=ease(seg(dq,.80,.855)), jb=$('joinCl');
+      $('ecgDot2').setAttribute('r',(3*pulse+mt*10).toFixed(2)); $('ecgDot2').setAttribute('opacity',(1-seg(dq,.83,.85)).toFixed(2));
+      $('ecgBase2').setAttribute('opacity',(1-mt).toFixed(2)); $('ecgFill2').setAttribute('opacity',(1-mt*.9).toFixed(2));
+      jb.style.clipPath=`inset(0 ${((1-mt)*100).toFixed(1)}% 0 0)`; jb.style.opacity=(1-seg(dq,.9,.93)).toFixed(2); jb.classList.toggle('live',mt>.9&&dq<.9); }
+    // scene 1
+    piles.forEach((r,i)=>r.setAttribute('opacity', q>=.01+i*.014?1:0));
+    $('d1a').setAttribute('opacity',seg(q,.02,.05)); $('d1b').setAttribute('opacity',seg(q,.08,.11));
+    // scene 2: signature writes itself, pen follows, stamp lands
+    const sg=seg(q,.27,.38);
+    $('sig').style.strokeDashoffset=(1-sg).toFixed(3);
+    const sigEl=$('sig'), L=sigEl.getTotalLength?1:0;
+    $('stamp').setAttribute('opacity',seg(q,.385,.395)); $('stamp').setAttribute('transform',`translate(178 196) rotate(-14) scale(${(1+ (1-seg(q,.385,.40))*.6).toFixed(2)})`);
+    $('pen').setAttribute('transform',`translate(${(-120+Math.sin(sg*30)*6*(sg>0&&sg<1)).toFixed(1)} ${(-120+sg*10).toFixed(1)}) rotate(-30)`);
+    $('d2a').setAttribute('opacity',seg(q,.39,.42));
+    // scene 3: patients walk in from the door to the chairs
+    patList.forEach((g,i)=>{ const t=ease(seg(q,.56+i*.035,.64+i*.035)); const x=lerp(2292,chairsX[i],t); const bob=t>0&&t<1?-Math.abs(Math.sin(t*Math.PI*5))*8:0; const sitY=t>=1?-30:0; g.setAttribute('transform',`translate(${x.toFixed(1)} ${(420+bob+sitY).toFixed(1)}) scale(${t>0?1:0})`); });
+    $('d3a').setAttribute('opacity',seg(q,.68,.71));
+    // scene 4: coins rain into the jar, doctor jumps
+    let filled=0;
+    drops.forEach((g,i)=>{ const t=seg(q,.86+i*.008,.9+i*.008); if(t<=0||t>=1){ g.setAttribute('opacity',0); if(t>=1) filled++; return; } const x=2600+Math.sin(i*2.3)*26, y=lerp(150,380,t*t); g.setAttribute('opacity',1); g.setAttribute('transform',`translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(time*200+i*30)%360})`); });
+    $('jarFill').setAttribute('y',-filled*11); $('jarFill').setAttribute('height',filled*11);
+    const jt=seg(q,.9,1); let jy=0, sq=1; if(jt>0&&jt<1){ const ph=(jt*3)%1; jy=-Math.sin(ph*Math.PI)*60; sq=ph<.12||ph>.88?.9:1.03; }
+    $('doc4').setAttribute('transform',`translate(2790 ${(420+jy).toFixed(1)})`);
+    $('doc4In').setAttribute('transform',`scale(${(2-sq).toFixed(3)} ${sq.toFixed(3)})`);
+    $('doc4Sp').setAttribute('opacity',jt>0?1:0);
+    $('d4a').setAttribute('opacity',seg(q,.9,.93)); $('d4b').setAttribute('opacity',seg(q,.91,.94));
+    const dr=docs.getBoundingClientRect(); const inDocs=dr.top<innerHeight*.5&&dr.bottom>innerHeight*.5;
+    if(inDocs) document.body.classList.toggle('dark', pour<.5 || out>.5);
+    requestAnimationFrame(dFrame);
+  }
+  requestAnimationFrame(dFrame);
+
+
+  // poof shape
+  (function(){ let d=''; const k=18; for(let i=0;i<k;i++){ const a=i/k*Math.PI*2, r=(i%2?34:62)+Math.sin(i*7.3)*6; d+=(i?'L':'M')+(Math.cos(a)*r).toFixed(1)+' '+(Math.sin(a)*r*.8).toFixed(1)+' '; } $('poofPath').setAttribute('d',d+'Z'); })();
+
+  // coins
+  const coinG=$('coins'), coins=[];
+  for(let i=0;i<6;i++){ const g=document.createElementNS(NS,'g'); g.innerHTML='<circle r="10" fill="#1CA5BA" stroke="#1b1d22" stroke-width="2"/><path d="M0 -4.5 L0 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>'; g.setAttribute('opacity',0); coinG.appendChild(g); coins.push(g); }
+
+  // words around Luis: [text, from, to, dx, dy, classes]  (dx/dy in Luis units from his head)
+  const WORDS=[
+    ['this is luis.',.03,.12,0,-150,'big'],
+    ['delivery driver',.045,.12,-150,-30,''],
+    ['garland, tx',.06,.12,150,-60,''],
+    ['19 coworkers',.075,.12,140,20,''],
+    ['tuesday, 7:40 am',.13,.24,-150,-80,''],
+    ['something\'s off',.15,.24,150,-90,'r'],
+    ['really off.',.17,.24,0,-160,'big r'],
+    ['ouch',.19,.24,-130,20,'r'],
+    ['his company already paid.',.25,.37,0,-165,'big t'],
+    ['one flat price',.27,.37,-160,-60,''],
+    ['per person, per month',.29,.37,165,-30,''],
+    ['credits: ready',.32,.38,150,30,'t box'],
+    ['clinic: 9 min away',.39,.5,-150,-90,''],
+    ['no appointment drama',.42,.5,0,-160,''],
+    ['now: two endings',.5,.565,0,-165,'big'],
+    ['harper pays the doctor.',.58,.69,0,-165,'big t'],
+    ['same day',.61,.72,-140,-60,''],
+    ['no claim forms',.64,.75,-140,10,''],
+    ['luis pays $0.',.70,.86,0,-170,'big'],
+    ['the lump: gone',.70,.80,-140,-70,''],
+    ['back on route by lunch',.77,.86,-130,10,'t'],
+    ['same luis.',.87,.93,0,-170,'big'],
+    ['same tummy.',.895,.95,-130,-60,''],
+    ['different ending.',.92,1.01,0,-215,'big t'],
+  ];
+  const wl=$('words');
+  const wEls=WORDS.map(w=>{ const s=document.createElement('span'); s.className='w '+w[5]; s.textContent=w[0]; wl.appendChild(s); return s; });
+
+  const CH=['01 / poof','02 / ouch','03 / credits','04 / the clinic','05 / two endings','06 / same luis'];
+  const story=$('story'), stage=document.querySelector('.stage'), svg=$('st');
+  let W=0,H=0,S=1,GY=0;
+  function size(){ W=stage.clientWidth; H=stage.clientHeight; svg.setAttribute('viewBox',`0 0 ${W} ${H}`); S=clamp(Math.min(W/560,H/720),.55,1.35); GY=H*.68; $('ground').setAttribute('d',`M-20 ${GY} C ${W*.25} ${GY-5}, ${W*.5} ${GY+5}, ${W*.75} ${GY-2} S ${W*.95} ${GY+2}, ${W+20} ${GY}`); }
+  addEventListener('resize',size); size();
+
+  let target=0, p=0;
+  function readScroll(){ const r=story.getBoundingClientRect(); target=clamp(-r.top/(r.height-innerHeight)); const inS=r.top<innerHeight*.5&&r.bottom>innerHeight*.3; $('bar').classList.toggle('off',!inS); }
+  addEventListener('scroll',readScroll,{passive:true}); readScroll();
+
+  function wavyEdgeX(baseX,y,amp,time){ return baseX+Math.sin(y*.018+time*2.2)*amp+Math.sin(y*.047-time*1.3)*amp*.5; }
+
+  function frame(time){
+    time/=1000;
+    { const r=story.getBoundingClientRect(); if(r.bottom<-innerHeight||r.top>innerHeight*2){ requestAnimationFrame(frame); return; } }
+    p += (target-p)*(reduce?1:.14);
+    { const bw=$('bar').clientWidth; const x=p*bw; $('ecgRect').setAttribute('width',x.toFixed(1));
+      const pulse=1+Math.max(0,Math.sin(time*6.5))**8*.9; $('ecgDot').setAttribute('cx',x.toFixed(1)); $('ecgDot').setAttribute('cy',ecgY(x).toFixed(1));
+      // the dot flows into the button: line fades, dot swells, pill opens from the right
+      const mt=ease(seg(p,.955,.995)), jb=$('joinCo'), bh=$('bar').clientHeight;
+      $('ecgDot').setAttribute('r',(3*pulse+mt*10).toFixed(2)); $('ecgDot').setAttribute('opacity',(1-seg(p,.975,.99)).toFixed(2));
+      $('ecgBase').setAttribute('opacity',(1-mt).toFixed(2)); $('ecgFill').setAttribute('opacity',(1-mt*.9).toFixed(2));
+      jb.style.clipPath=`inset(0 0 0 ${((1-mt)*100).toFixed(1)}%)`; jb.classList.toggle('live',mt>.9); }
+    const ci = p<.12?0:p<.24?1:p<.38?2:p<.5?3:p<.86?4:5; 
+
+    // split: Luis moves from 50% to 37.5% when the ink takes the right quarter; back at the end
+    const split = ease(seg(p,.53,.57)) * (1-ease(seg(p,.86,.92)));
+    const cx = lerp(W*.5, W*.375, split);
+    const leftMax = lerp(W, W*.75, split);
+
+    // poof + appear (springy)
+    tf($('poof'), W*.5, GY-60*S, S*1.25*ease(seg(p,0,.05)));
+    op($('poof'), 1-seg(p,.06,.1));
+    const ap = seg(p,.03,.085); const apS = ap<=0?0:back(ap);
+
+    // pain
+    const pain = seg(p,.13,.2);
+    const heal = seg(p,.65,.71);
+    const lumpS = pain*(1-heal);
+    const pulse = 1+Math.sin(time*7)*.08*lumpS;
+    $('lump').setAttribute('transform',`translate(-6 -58) scale(${(lumpS*pulse).toFixed(3)})`);
+    op($('drop'), pain>0&&heal<1 ? pain*(1-heal) : 0);
+
+    // mouths
+    const happy = heal>=1 || p>=.71;
+    op($('mN'), pain>0||happy?0:1); op($('mS'), pain>0&&!happy?1:0); op($('mH'), happy?1:0);
+
+    // jumps: three hops after healing, one more at the very end
+    let jy=0, sq=1;
+    const jt = seg(p,.71,.85);
+    if(jt>0 && jt<1){ const ph=(jt*3)%1; jy=-Math.sin(ph*Math.PI)*70*S; sq = ph<.12||ph>.88 ? .9 : 1.03; }
+    const jt2 = seg(p,.93,.99);
+    if(jt2>0 && jt2<1){ jy=-Math.sin(jt2*Math.PI)*80*S; }
+    const jumping = (jt>0&&jt<1)||(jt2>0&&jt2<1)||p>=.99;
+    const up=jumping||(happy&&p<.86), hold=!up&&pain>0&&!happy; op($('armsU'), up?1:0); op($('armsP'), hold?1:0); op($('armsD'), !up&&!hold?1:0);
+    op($('sparks'), jumping?1:0);
+    const lean = pain>0&&!happy ? -4*pain : 0;
+    tf($('luis'), cx, GY+jy, S*apS);
+    $('luisIn').setAttribute('transform',`rotate(${lean}) scale(${(2-sq).toFixed(3)} ${sq.toFixed(3)})`);
+
+    // employer: walks in, throws coins, leaves
+    const empIn = ease(seg(p,.22,.26)), empOut = seg(p,.38,.42);
+    tf($('emp'), lerp(-80, cx-210*S, empIn), GY, S);
+    op($('emp'), empIn*(1-empOut));
+    $('empArm').setAttribute('d', p>.26&&p<.36 ? 'M14 -84 C 28 -96 36 -108 40 -120' : 'M14 -84 C 22 -72 24 -62 24 -54');
+
+    // doctor slides in from the right
+    const docIn = ease(seg(p,.38,.47));
+    const docX = lerp(W+120, cx+165*S, docIn);
+    tf($('doc'), docX, GY, S);
+    op($('doc'), docIn*(1-seg(p,.88,.92)));
+    const paid = p>.635;
+    op($('docMouthN'), paid?0:1); op($('docMouthH'), paid?1:0);
+
+    // coins: from boss -> orbit Luis -> into pocket; later pocket -> doctor
+    coins.forEach((c,i)=>{
+      let x=0,y=0,o=0;
+      const a = seg(p,.27+i*.012,.31+i*.012);
+      const orbit = seg(p,.31,.36), pocket = seg(p,.36,.385);
+      if(a>0 && pocket<1){
+        const ox = cx-210*S+40*S, oy = GY-120*S;
+        const ang = time*1.6 + i*(Math.PI*2/6);
+        const rx = cx+Math.cos(ang)*78*S, ry = GY-80*S+Math.sin(ang)*40*S;
+        if(a<1){ x=lerp(ox,rx,a); y=lerp(oy,ry,a)-Math.sin(a*Math.PI)*80*S; }
+        else { x=rx; y=ry; }
+        if(pocket>0){ x=lerp(x,cx+18*S,pocket); y=lerp(y,GY-40*S,pocket); }
+        o=1-pocket*.9;
+      }
+      const g = seg(p,.585+i*.008,.625+i*.008);
+      if(g>0 && g<1){ const sx=cx+18*S, sy=GY-40*S, tx=docX, ty=GY-60*S; x=lerp(sx,tx,g); y=lerp(sy,ty,g)-Math.sin(g*Math.PI)*90*S; o=1; }
+      tf(c,x,y,S*(o>0?1:0),` rotate(${(time*180+i*40)%360})`);
+      op(c,o);
+    });
+
+    // ---------- INK ----------
+    // drip runs down from the top into the right quarter, then floods it
+    const dx = W*.87;
+    const dr = seg(p,.5,.535);
+    const fl = ease(seg(p,.53,.57));
+    // at the end the black pool sweeps left across the whole screen and turns into Harper navy on the way
+    const sweep = ease(seg(p,.865,.95));
+    const tint = seg(p,.875,.965);
+    if(dr>0 && fl<1){
+      const len = dr*H*.85, r=14*S;
+      $('drip').setAttribute('d',`M${dx-r*.6} -5 C ${dx-r*.7} ${len*.4}, ${dx-r} ${len-r}, ${dx} ${len+r*.6} C ${dx+r} ${len-r}, ${dx+r*.7} ${len*.4}, ${dx+r*.6} -5 Z`);
+    } else $('drip').setAttribute('d','');
+    let poolEdge = W+20;
+    if(fl>0){
+      const xl = lerp(lerp(dx, W*.75, fl), -60, sweep), xr = lerp(dx, W+10, fl);
+      poolEdge = xl;
+      const amp = 5*fl + Math.sin(sweep*Math.PI)*26;
+      let d=`M${xr} -10`;
+      for(let y=-10; y<=H+10; y+=18){ d+=` L${wavyEdgeX(xl - Math.sin((y/H)*Math.PI)*sweep*(1-sweep)*W*.35, y, amp, time).toFixed(1)} ${y.toFixed(1)}`; }
+      d+=` L${xr} ${H+10} Z`;
+      $('pool').setAttribute('d',d);
+      // gradient: the leading edge of the wave is already Harper navy, the black behind it fades out
+      const mix=(t)=>{ const c0=[5,6,8], c1=[18,39,73]; return `rgb(${c0.map((v,i)=>Math.round(v+(c1[i]-v)*t)).join(',')})`; };
+      const g=$('poolGrad'); g.setAttribute('x1',Math.max(-60,xl).toFixed(1)); g.setAttribute('x2',(W+10).toFixed(1));
+      $('pg0').setAttribute('stop-color',mix(clamp(sweep*3)));
+      $('pg1').setAttribute('stop-color',mix(tint));
+    } else $('pool').setAttribute('d','');
+    $('flood').setAttribute('d','');
+    const fu = sweep;
+    const inv = sweep>0 && poolEdge < cx + 20*S;
+    $('luis').classList.toggle('inv',inv); wl.classList.toggle('inv',inv); { const dr2=document.getElementById('doctors').getBoundingClientRect(); if(!(dr2.top<innerHeight*.5&&dr2.bottom>innerHeight*.5)) document.body.classList.toggle('dark', inv && target>.97); }
+
+    // ---------- OLD WAY (inside the black quarter) ----------
+    const ccx = W*.875, s2 = Math.min(S*.75, (W*.25)/200);
+    const oldOn = seg(p,.555,.575)*(1-seg(p,.86,.9));
+    op($('old'), oldOn);
+    $('oldLog').style.opacity = oldOn;
+    document.querySelectorAll('#oldLog p').forEach(el=>el.classList.toggle('on', p>=+el.dataset.at && p<.9));
+    // Luis 2 splits off Luis 1 and slides into the black, then flows back at the end
+    const arrive = ease(seg(p,.535,.575)), back2 = ease(seg(p,.865,.93));
+    let l2x = lerp(cx, ccx, arrive), l2s = lerp(S, s2, arrive), l2y = GY;
+    if(back2>0){ l2x = lerp(ccx, cx, back2); l2s = lerp(s2, S, back2); }
+    const sit = seg(p,.72,.74)*(1-seg(p,.79,.81));
+    l2y = GY - sit*0;
+    tf($('luis2'), l2x, l2y, l2s);
+    op($('luis2'), seg(p,.535,.545)*(1-back2));
+    // employer 2 hands over a gray "coverage" card instead of coins
+    const e2 = seg(p,.59,.61)*(1-seg(p,.665,.685));
+    tf($('emp2'), ccx+62*s2, GY, s2*.9); op($('emp2'), e2);
+    const cardT = ease(seg(p,.61,.65));
+    tf($('card'), lerp(ccx+62*s2, ccx-6*s2, cardT), lerp(GY-120*s2, GY-150*s2, cardT), s2);
+    op($('card'), seg(p,.61,.62)*(1-seg(p,.7,.72)));
+    // waiting room + clock
+    const q = seg(p,.71,.73)*(1-seg(p,.79,.81));
+    tf($('chairs'), ccx, GY, s2*.8); op($('chairs'), q);
+    tf($('clock'), ccx, GY-185*s2, s2); op($('clock'), q);
+    const spin = seg(p,.72,.79)*720;
+    $('hMin').setAttribute('transform',`rotate(${spin*6})`); $('hHr').setAttribute('transform',`rotate(${spin/2})`);
+    // doctor 2 gets paperwork, not money
+    const d2 = seg(p,.78,.8);
+    tf($('doc2'), ccx+62*s2, GY, s2*.9); op($('doc2'), d2*(1-seg(p,.86,.89)));
+    const papT = ease(seg(p,.8,.84));
+    tf($('paper'), ccx+62*s2+20*s2, lerp(GY-260*s2, GY-80*s2, papT), s2, ` rotate(${lerp(-30,8,papT)})`);
+    op($('paper'), seg(p,.8,.81)*(1-seg(p,.86,.89)));
+
+    // ---------- WORDS ----------
+    const hx = cx, hy = GY-70*S;
+    WORDS.forEach((w,i)=>{
+      const el=wEls[i];
+      const tin = seg(p,w[1],w[1]+.015), tout = seg(p,w[2]-.012,w[2]);
+      const o = tin*(1-tout);
+      if(o<=0){ el.style.opacity=0; return; }
+      if(el.classList.contains('big')) el.style.maxWidth=Math.max(140,leftMax-24)+'px';
+      const ww = el.offsetWidth, wh = el.offsetHeight;
+      let x = hx + w[3]*S - ww/2, y = hy + w[4]*S - wh/2 + (1-tin)*14 - tout*10;
+      x = clamp(x, 12, leftMax-ww-12);
+      el.style.opacity=o.toFixed(3);
+      el.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
+    });
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

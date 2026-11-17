@@ -1,4 +1,4 @@
 # Harper Health Network - homepage concept
 
-- index.html: concept overview
-- site.html: live homepage
+- index.html, mac.html, site.html: hand-drawn version
+- logo.html, mac-logo.html, site-logo.html: logo-style version
